@@ -450,9 +450,14 @@ function initActiveNav() {
 }
 
 async function main() {
-  const res = await fetch(DATA_URL, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Failed to load ${DATA_URL}: ${res.status}`);
-  const data = await res.json();
+  let data = null;
+  if (typeof window !== "undefined" && window.__RESUME_DATA__ && typeof window.__RESUME_DATA__ === "object") {
+    data = window.__RESUME_DATA__;
+  } else {
+    const res = await fetch(DATA_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error(`Failed to load ${DATA_URL}: ${res.status}`);
+    data = await res.json();
+  }
 
   const basics = data.basics ?? {};
   document.title = `${basics.name ?? "简历"}｜${basics.headline ?? "Resume"}`;

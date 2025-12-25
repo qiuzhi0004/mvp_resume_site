@@ -155,6 +155,6 @@
   "certifications": ["Google Data Analytics Certificate（示例）", "Scrum Product Owner（示例）"],
   "download": {
     "label": "下载 PDF 简历",
-    "pdfPath": "TODO: ./resume.pdf"
+    "pdfPath": "./resume.pdf"
   }
 }

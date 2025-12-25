@@ -566,3 +566,34 @@ details:not([open]) .project-chevron::before {
     transition: none;
   }
 }
+
+@media print {
+  body {
+    background: #ffffff;
+  }
+
+  .site-header {
+    position: static;
+    backdrop-filter: none;
+    background: #ffffff;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .skip-link,
+  .toast {
+    display: none !important;
+  }
+
+  .card {
+    box-shadow: none;
+    transform: none;
+  }
+
+  a {
+    color: var(--text);
+    text-decoration: none;
+  }
+}

@@ -17,8 +17,11 @@ python3 -m http.server 5173
 ## 填写内容
 
 - 编辑：`data/resume.json`
-- PDF 简历：
-  - 把文件放在本目录下，例如 `resume.pdf`
-  - 然后把 `download.pdfPath` 改成 `./resume.pdf`
+- 生成/更新 PDF 简历（推荐：网页渲染效果）：
+  - 启动预览后在浏览器里 `打印 (Cmd/Ctrl+P) → 保存为 PDF`
+  - 保存到本目录并命名为：`resume.pdf`
+- 生成/更新 PDF 简历（备选：文本版/无依赖脚本）：
+  - 运行：`node scripts/generate_resume_pdf.mjs`
+  - 产物：`resume.pdf`
 
 # mvp_resume_site
