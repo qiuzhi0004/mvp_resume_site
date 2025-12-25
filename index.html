@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="个人简历网站（MVP）" />
+    <title>简历</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到正文</a>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">CV</span>
+          <span class="brand-text" id="brandText">简历</span>
+        </div>
+        <nav class="nav" aria-label="页面导航">
+          <a href="#hero">概览</a>
+          <a href="#experience">经历</a>
+          <a href="#projects">项目</a>
+          <a href="#skills">技能</a>
+          <a href="#education">教育</a>
+          <a href="#contact">联系</a>
+          <a href="#download">下载</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="container">
+      <section id="hero" class="section hero" aria-labelledby="heroTitle">
+        <h1 id="heroTitle" class="hero-title">加载中…</h1>
+        <p class="hero-subtitle" id="heroSubtitle">正在读取数据文件</p>
+        <ul class="hero-highlights" id="heroHighlights"></ul>
+        <div class="hero-cta" id="heroCta"></div>
+      </section>
+
+      <section id="experience" class="section" aria-labelledby="experienceTitle">
+        <div class="section-head">
+          <h2 id="experienceTitle">经历</h2>
+          <p class="section-desc">按时间倒序，强调成果。</p>
+        </div>
+        <div class="stack" id="experienceList"></div>
+      </section>
+
+      <section id="projects" class="section" aria-labelledby="projectsTitle">
+        <div class="section-head">
+          <h2 id="projectsTitle">项目</h2>
+          <p class="section-desc">包含可验证链接/截图/成果（素材不足用 TODO）。</p>
+        </div>
+        <div id="projectsControls"></div>
+        <div class="grid" id="projectsGrid"></div>
+      </section>
+
+      <section id="skills" class="section" aria-labelledby="skillsTitle">
+        <div class="section-head">
+          <h2 id="skillsTitle">技能</h2>
+          <p class="section-desc">按能力组归类。</p>
+        </div>
+        <div class="grid" id="skillsGrid"></div>
+      </section>
+
+      <section id="education" class="section" aria-labelledby="educationTitle">
+        <div class="section-head">
+          <h2 id="educationTitle">教育 / 证书</h2>
+        </div>
+        <div class="stack" id="educationList"></div>
+      </section>
+
+      <section id="contact" class="section" aria-labelledby="contactTitle">
+        <div class="section-head">
+          <h2 id="contactTitle">联系</h2>
+          <p class="section-desc">含一键复制。</p>
+        </div>
+        <div class="stack" id="contactList"></div>
+      </section>
+
+      <section id="download" class="section" aria-labelledby="downloadTitle">
+        <div class="section-head">
+          <h2 id="downloadTitle">下载简历</h2>
+        </div>
+        <div class="card" id="downloadCard"></div>
+      </section>
+
+      <footer class="site-footer">
+        <span id="footerMeta"></span>
+      </footer>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <noscript>
+      <div class="container">
+        <p>需要启用 JavaScript 才能渲染数据驱动内容。</p>
+      </div>
+    </noscript>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
