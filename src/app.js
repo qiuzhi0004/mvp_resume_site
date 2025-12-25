@@ -65,24 +65,38 @@ function renderHero(data) {
   const basics = data.basics ?? {};
   const highlights = Array.isArray(data.highlights) ? data.highlights : [];
 
-  const title = `${basics.name ?? "TODO：姓名"}｜${basics.headline ?? "TODO：一句话定位"}`;
-  setText("heroTitle", title);
+  const name = basics.name ?? "TODO：姓名";
+  const headline = basics.headline ?? "TODO：一句话定位";
+  const heroTitle = document.getElementById("heroTitle");
+  if (heroTitle) {
+    heroTitle.replaceChildren(
+      el("span", { class: "hero-line hero-name reveal", style: "transition-delay: 0ms", text: name }),
+      el("span", { class: "hero-line hero-line-muted reveal", style: "transition-delay: 80ms", text: headline })
+    );
+  }
 
   const subtitleParts = [];
   if (basics.location) subtitleParts.push(basics.location);
   if (basics.email) subtitleParts.push(basics.email);
   if (basics.phone) subtitleParts.push(basics.phone);
   setText("heroSubtitle", subtitleParts.length ? subtitleParts.join("｜") : "TODO：补充基本信息（地点/邮箱/电话）");
+  const heroSubtitle = document.getElementById("heroSubtitle");
+  if (heroSubtitle) heroSubtitle.classList.add("reveal");
+  if (heroSubtitle) heroSubtitle.style.transitionDelay = "140ms";
 
   const list = document.getElementById("heroHighlights");
   list.replaceChildren(
-    ...highlights.slice(0, 5).map((h) => el("li", { text: h }))
+    ...highlights.slice(0, 5).map((h, i) =>
+      el("li", { class: "reveal", style: `transition-delay: ${220 + i * 60}ms`, text: h })
+    )
   );
 
   const cta = document.getElementById("heroCta");
   const contactBtn = el("a", { class: "btn primary", href: "#contact", text: "联系我" });
   const downloadBtn = el("a", { class: "btn", href: "#download", "data-download-link": "true", text: "下载简历" });
   cta.replaceChildren(contactBtn, downloadBtn);
+  cta.classList.add("reveal");
+  cta.style.transitionDelay = "560ms";
 
   const brandText = document.getElementById("brandText");
   if (brandText) brandText.textContent = basics.name ?? "简历";
@@ -103,6 +117,36 @@ function applyDownloadLinks(pdfPath) {
       a.removeAttribute("aria-label");
     }
   }
+}
+
+function initReveal() {
+  document.documentElement.classList.add("js");
+
+  const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  const targets = Array.from(
+    document.querySelectorAll(".section-head, .card, .download-row, details.card, .contact-actions")
+  );
+
+  for (const t of targets) t.classList.add("reveal");
+
+  const revealables = Array.from(document.querySelectorAll(".reveal"));
+  if (reduce || !("IntersectionObserver" in window)) {
+    for (const el of revealables) el.classList.add("is-visible");
+    return;
+  }
+
+  const obs = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        e.target.classList.add("is-visible");
+        obs.unobserve(e.target);
+      }
+    },
+    { root: null, threshold: 0.12, rootMargin: "0px 0px -10% 0px" }
+  );
+
+  for (const el of revealables) obs.observe(el);
 }
 
 function renderExperience(data) {
@@ -542,6 +586,7 @@ async function main() {
   renderMeta(data);
   initActiveNav();
   applyDownloadLinks(data.download?.pdfPath ?? null);
+  initReveal();
 }
 
 main().catch((err) => {
