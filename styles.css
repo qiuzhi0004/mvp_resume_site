@@ -515,6 +515,52 @@ details:not([open]) .project-chevron::before {
   white-space: nowrap;
 }
 
+.contact-card {
+  padding: var(--space-4);
+}
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.contact-action {
+  display: inline-flex;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.03);
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease,
+    background 120ms ease;
+}
+
+.icon-btn:hover {
+  border-color: var(--border-strong);
+  background: rgba(15, 23, 42, 0.06);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.icon-btn:active {
+  transform: translateY(0);
+}
+
+.icon-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
 .list {
   margin: var(--space-3) 0 0;
   padding-left: 18px;

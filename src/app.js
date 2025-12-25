@@ -161,12 +161,7 @@ function renderProjectControls({ tags, activeTag, onChange }) {
   if (!root) return;
 
   if (!tags.length) {
-    root.replaceChildren(
-      el("div", { class: "filters" }, [
-        el("span", { class: "filters-label", text: "标签筛选" }),
-        el("span", { class: "filters-hint", text: "TODO：在 data/resume.json 的 projects[].tags 添加标签后启用" }),
-      ])
-    );
+    root.replaceChildren();
     return;
   }
 
@@ -353,56 +348,108 @@ function renderContact(data) {
   const links = Array.isArray(basics.links) ? basics.links : [];
   const root = document.getElementById("contactList");
 
-  const rows = [];
+  const icon = (name) => {
+    // inline SVG; keep minimal for performance
+    const common = 'viewBox="0 0 24 24" aria-hidden="true" focusable="false"';
+    if (name === "email")
+      return `<svg ${common}><path fill="currentColor" d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4.2-8 5.3-8-5.3V6l8 5.3L20 6v2.2Z"/></svg>`;
+    if (name === "phone")
+      return `<svg ${common}><path fill="currentColor" d="M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1.1-.2 1.2.5 2.5.8 3.9.8.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.3 21 3 13.7 3 4c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.4.3 2.7.8 3.9.1.4.1.8-.2 1.1l-2.2 2.2Z"/></svg>`;
+    if (name === "wechat")
+      return `<svg ${common}><path fill="currentColor" d="M9.5 4C5.9 4 3 6.6 3 9.8c0 1.8.9 3.5 2.4 4.6L5 17l2.6-1.4c.6.1 1.2.2 1.9.2.1 0 .2 0 .3 0-.2-.6-.3-1.2-.3-1.8 0-3 2.8-5.5 6.3-5.8C14.9 5.7 12.4 4 9.5 4Zm9.7 7.2c-2.8 0-5.1 2-5.1 4.5 0 2.5 2.3 4.5 5.1 4.5.5 0 1.1-.1 1.6-.2L23 21l-.5-2.2c.9-.8 1.5-1.9 1.5-3.1 0-2.5-2.3-4.5-5.1-4.5Z"/></svg>`;
+    if (name === "github")
+      return `<svg ${common}><path fill="currentColor" d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.8c-2.8.6-3.4-1.2-3.4-1.2-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.4 1.1 3 .8.1-.7.4-1.1.7-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.8 1a9.5 9.5 0 0 1 5.1 0c2-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8V21c0 .3.2.6.7.5A10 10 0 0 0 12 2Z"/></svg>`;
+    if (name === "linkedin")
+      return `<svg ${common}><path fill="currentColor" d="M6.5 6.8A2 2 0 1 1 6.5 3a2 2 0 0 1 0 3.8ZM3.8 20.5h5.4V9.1H3.8v11.4ZM11.2 9.1h5.1v1.6h.1c.7-1.2 2.1-2 3.9-2 4.2 0 5 2.5 5 5.8v6h-5.4v-5.3c0-1.3 0-3-2.1-3s-2.4 1.3-2.4 2.9v5.4h-5.4V9.1Z"/></svg>`;
+    if (name === "link")
+      return `<svg ${common}><path fill="currentColor" d="M10.6 13.4a1 1 0 0 1 0-1.4l2.8-2.8a3 3 0 1 1 4.2 4.2l-1.5 1.5a1 1 0 1 1-1.4-1.4l1.5-1.5a1 1 0 1 0-1.4-1.4l-2.8 2.8a1 1 0 0 1-1.4 0Zm2.8 1.2a1 1 0 0 1 0 1.4l-2.8 2.8a3 3 0 1 1-4.2-4.2l1.5-1.5a1 1 0 1 1 1.4 1.4L8 15.9a1 1 0 1 0 1.4 1.4l2.8-2.8a1 1 0 0 1 1.4 0Z"/></svg>`;
+    return `<svg ${common}><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm7.9 9h-3a15.7 15.7 0 0 0-1.1-5.1A8 8 0 0 1 19.9 11ZM12 4c1.1 0 2.6 2 3.4 7H8.6C9.4 6 10.9 4 12 4ZM4.1 13h3a15.7 15.7 0 0 0 1.1 5.1A8 8 0 0 1 4.1 13Zm3-2h-3a8 8 0 0 1 4.1-5.1A15.7 15.7 0 0 0 7.1 11Zm1.5 2h6.8c-.8 5-2.3 7-3.4 7s-2.6-2-3.4-7Zm7.2 5.1A15.7 15.7 0 0 0 16.9 13h3a8 8 0 0 1-4.1 5.1Z"/></svg>`;
+  };
 
-  if (basics.email) {
-    rows.push({ label: "邮箱", value: basics.email, href: `mailto:${basics.email}`, copy: basics.email });
+  const isMeaningful = (v) => v && String(v).trim() && !String(v).trim().startsWith("TODO");
+  const actions = [];
+  const todos = [];
+
+  if (isMeaningful(basics.email)) {
+    actions.push(
+      el("button", {
+        class: "icon-btn",
+        type: "button",
+        "aria-label": "复制邮箱",
+        title: "复制邮箱",
+        onclick: async () => {
+          const ok = await copyToClipboard(String(basics.email));
+          if (!ok) window.prompt("复制以下内容：", String(basics.email));
+          toast(ok ? "已复制邮箱" : "复制失败（已打开手动复制）");
+        },
+      })
+    );
+    actions[actions.length - 1].innerHTML = icon("email");
   } else {
-    rows.push({ label: "邮箱", value: "TODO：邮箱", href: null, copy: null });
+    todos.push("邮箱");
   }
 
-  if (basics.wechat) {
-    const v = String(basics.wechat);
-    const isTodo = v.startsWith("TODO");
-    rows.push({ label: "微信", value: v, href: null, copy: isTodo ? null : v });
+  if (isMeaningful(basics.wechat)) {
+    actions.push(
+      el("button", {
+        class: "icon-btn",
+        type: "button",
+        "aria-label": "复制微信号",
+        title: "复制微信号",
+        onclick: async () => {
+          const ok = await copyToClipboard(String(basics.wechat));
+          if (!ok) window.prompt("复制以下内容：", String(basics.wechat));
+          toast(ok ? "已复制微信号" : "复制失败（已打开手动复制）");
+        },
+      })
+    );
+    actions[actions.length - 1].innerHTML = icon("wechat");
+  } else if (basics.wechat) {
+    // present but TODO
+    todos.push("微信号");
   }
 
-  if (basics.phone) {
-    rows.push({ label: "电话", value: basics.phone, href: `tel:${basics.phone}`, copy: basics.phone });
-  } else {
-    rows.push({ label: "电话", value: "TODO：电话（可选）", href: null, copy: null });
+  if (isMeaningful(basics.phone)) {
+    actions.push(
+      el("button", {
+        class: "icon-btn",
+        type: "button",
+        "aria-label": "复制电话",
+        title: "复制电话",
+        onclick: async () => {
+          const ok = await copyToClipboard(String(basics.phone));
+          if (!ok) window.prompt("复制以下内容：", String(basics.phone));
+          toast(ok ? "已复制电话" : "复制失败（已打开手动复制）");
+        },
+      })
+    );
+    actions[actions.length - 1].innerHTML = icon("phone");
   }
 
   for (const l of links) {
-    rows.push({ label: l.label ?? "链接", value: l.url ?? "TODO：链接", href: l.url ?? null, copy: l.url ?? null });
+    const label = (l?.label ?? "链接").toString().trim();
+    const url = l?.url;
+    if (!isMeaningful(url)) continue;
+    const key = label.toLowerCase();
+    const kind = key.includes("github") ? "github" : key.includes("linkedin") ? "linkedin" : "link";
+    const a = el("a", {
+      class: "icon-btn",
+      href: String(url),
+      target: "_blank",
+      rel: "noreferrer",
+      "aria-label": `打开${label}`,
+      title: `打开${label}`,
+    });
+    a.innerHTML = icon(kind);
+    actions.push(a);
   }
 
-  const kvs = el("div", { class: "kvs" });
-  for (const r of rows) {
-    const valueNode = r.href ? makeLink(r.href, r.value) : el("span", { text: r.value });
-    const copyBtn =
-      r.copy && r.copy.startsWith("TODO") !== true
-        ? el("button", {
-            class: "btn",
-            type: "button",
-            text: "复制",
-            onclick: async () => {
-              const ok = await copyToClipboard(r.copy);
-              if (!ok) window.prompt("复制以下内容：", r.copy);
-              toast(ok ? "已复制" : "复制失败（已打开手动复制）");
-            },
-          })
-        : null;
-
-    kvs.append(
-      el("div", { class: "kv" }, [
-        el("span", { class: "k", text: r.label }),
-        el("span", { class: "v" }, [valueNode, copyBtn ? el("span", { style: "margin-left: 10px;" }, copyBtn) : null]),
-      ])
-    );
-  }
-
-  root.replaceChildren(el("div", { class: "card" }, kvs));
+  root.replaceChildren(
+    el("div", { class: "card contact-card" }, [
+      el("div", { class: "contact-actions", role: "list" }, actions.map((n) => el("div", { class: "contact-action", role: "listitem" }, n))),
+      todos.length ? el("p", { class: "card-meta", text: `TODO：补充${todos.join(" / ")}` }) : null,
+    ])
+  );
 }
 
 function renderDownload(data) {
