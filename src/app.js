@@ -81,11 +81,28 @@ function renderHero(data) {
 
   const cta = document.getElementById("heroCta");
   const contactBtn = el("a", { class: "btn primary", href: "#contact", text: "联系我" });
-  const downloadBtn = el("a", { class: "btn", href: "#download", text: "下载简历" });
+  const downloadBtn = el("a", { class: "btn", href: "#download", "data-download-link": "true", text: "下载简历" });
   cta.replaceChildren(contactBtn, downloadBtn);
 
   const brandText = document.getElementById("brandText");
   if (brandText) brandText.textContent = basics.name ?? "简历";
+}
+
+function applyDownloadLinks(pdfPath) {
+  const hasPdf = !!pdfPath && String(pdfPath).trim() && !String(pdfPath).includes("TODO");
+  const links = document.querySelectorAll("[data-download-link]");
+  for (const a of links) {
+    if (!(a instanceof HTMLAnchorElement)) continue;
+    if (hasPdf) {
+      a.setAttribute("href", pdfPath);
+      a.setAttribute("download", "");
+      a.setAttribute("aria-label", "下载简历 PDF");
+    } else {
+      a.setAttribute("href", "#download");
+      a.removeAttribute("download");
+      a.removeAttribute("aria-label");
+    }
+  }
 }
 
 function renderExperience(data) {
@@ -395,18 +412,24 @@ function renderDownload(data) {
   const pdfPath = dl.pdfPath ?? null;
   if (!pdfPath || String(pdfPath).includes("TODO")) {
     root.replaceChildren(
-      el("p", { class: "card-title", text: "TODO：补充 PDF 简历" }),
-      el("p", { class: "card-meta", text: "把 PDF 放到本文件夹下（例如 resume.pdf），并在 data/resume.json 里更新 pdfPath。" })
+      el("div", { class: "download-row" }, [
+        el("div", {}, [
+          el("p", { class: "card-title", text: "下载 PDF 简历（待补充）" }),
+          el("p", { class: "card-meta", text: "TODO：把 resume.pdf 放到站点目录，并在 data/resume.json 里更新 download.pdfPath。" }),
+        ]),
+      ])
     );
     return;
   }
 
+  const label = dl.label ?? "下载 PDF 简历";
   root.replaceChildren(
-    el("p", { class: "card-title", text: dl.label ?? "下载 PDF 简历" }),
-    el("p", { class: "card-meta", text: "点击下载或在新标签页打开。" }),
-    el("div", { class: "hero-cta" }, [
-      el("a", { class: "btn primary", href: pdfPath, target: "_blank", rel: "noreferrer", text: "打开 PDF" }),
-      el("a", { class: "btn", href: pdfPath, download: "", text: "下载 PDF" }),
+    el("a", { class: "download-row", href: pdfPath, download: "", "data-download-link": "true" }, [
+      el("div", {}, [
+        el("p", { class: "card-title", text: label }),
+        el("p", { class: "card-meta", text: "点击即可下载（也可用页面顶部“下载”）。" }),
+      ]),
+      el("span", { class: "download-chip", "aria-hidden": "true", text: "下载" }),
     ])
   );
 }
@@ -471,6 +494,7 @@ async function main() {
   renderDownload(data);
   renderMeta(data);
   initActiveNav();
+  applyDownloadLinks(data.download?.pdfPath ?? null);
 }
 
 main().catch((err) => {
