@@ -277,7 +277,7 @@ function renderProjects(data) {
                   el("span", { class: "pill" }, makeLink(s.url, s.label ?? "截图"))
                 ),
               ])
-            : el("p", { class: "card-meta", text: "证据：TODO（补充链接/截图）" });
+            : null;
 
         const tagRow = tags.length
           ? el("div", { class: "pill-row" }, tags.map((t) => el("span", { class: "pill", text: t })))
@@ -328,7 +328,8 @@ function renderProjects(data) {
 function renderSkills(data) {
   const groups = Array.isArray(data.skills) ? data.skills : [];
   const root = document.getElementById("skillsGrid");
-  root.classList.add("cols-2");
+  root.classList.remove("grid", "cols-2");
+  root.classList.add("skills-accordion");
 
   if (!groups.length) {
     root.replaceChildren(
@@ -340,15 +341,100 @@ function renderSkills(data) {
     return;
   }
 
-  root.replaceChildren(
-    ...groups.map((g) => {
-      const items = Array.isArray(g.items) ? g.items : [];
-      return el("section", { class: "card" }, [
-        el("h3", { class: "card-title", text: g.group ?? "TODO：分组名" }),
-        items.length ? el("ul", { class: "list" }, items.map((it) => el("li", { text: it }))) : el("p", { class: "card-meta", text: "TODO：补充条目" }),
-      ]);
-    })
-  );
+  const ACCENTS = [
+    "rgba(122, 92, 255, 0.30)", // purple
+    "rgba(34, 197, 94, 0.22)", // green
+    "rgba(96, 165, 250, 0.20)", // blue
+    "rgba(245, 158, 11, 0.20)", // amber
+    "rgba(167, 139, 250, 0.22)", // lavender
+    "rgba(122, 92, 255, 0.18)", // soft purple
+  ];
+
+  const panels = groups.map((g, index) => {
+    const groupName = g.group ?? "TODO：分组名";
+    const items = Array.isArray(g.items) ? g.items : [];
+    const tokens = items
+      .flatMap((it) =>
+        String(it ?? "")
+          .split(/[、，,]/g)
+          .map((s) => s.trim())
+          .filter(Boolean)
+      )
+      .filter(Boolean);
+    const listItems = tokens.length ? tokens : items;
+    const list = listItems.length
+      ? el(
+          "ul",
+          { class: "list skill-list" },
+          listItems.map((it) => el("li", { text: it }))
+        )
+      : el("p", { class: "card-meta", text: "TODO：补充条目" });
+
+    return el(
+      "article",
+      {
+        class: "skill-panel",
+        tabindex: "0",
+        role: "button",
+        "aria-expanded": "false",
+        "aria-label": `${groupName}（技能组）`,
+        style: `--skill-accent: ${ACCENTS[index % ACCENTS.length]};`,
+        dataset: { index },
+      },
+      [
+        el("div", { class: "skill-rail" }, [el("span", { class: "skill-rail-title", text: groupName })]),
+        el("div", { class: "skill-content" }, [
+          el("div", { class: "skill-head" }, [
+            el("h3", { class: "skill-title", text: groupName }),
+            el("p", { class: "skill-sub", text: listItems.length ? `${listItems.length} 条` : "" }),
+          ]),
+          el("div", { class: "skill-body" }, [list]),
+        ]),
+      ]
+    );
+  });
+
+  root.replaceChildren(...panels);
+
+  const panelEls = [...root.querySelectorAll(".skill-panel")];
+  if (!panelEls.length) return;
+
+  const canHover = window.matchMedia?.("(hover:hover)").matches ?? false;
+  const defaultIndex = 0;
+
+  const setActive = (nextIndex) => {
+    const idx = Math.max(0, Math.min(panelEls.length - 1, Number(nextIndex) || 0));
+    panelEls.forEach((panel, i) => {
+      const on = i === idx;
+      panel.dataset.active = on ? "true" : "false";
+      panel.setAttribute("aria-expanded", on ? "true" : "false");
+    });
+  };
+
+  setActive(defaultIndex);
+
+  panelEls.forEach((panel, i) => {
+    if (canHover) {
+      panel.addEventListener("pointerenter", () => setActive(i));
+    }
+
+    panel.addEventListener("focusin", () => setActive(i));
+
+    panel.addEventListener("click", () => {
+      if (!canHover) setActive(i);
+    });
+
+    panel.addEventListener("keydown", (e) => {
+      if (e.code === "Enter" || e.code === "Space") {
+        e.preventDefault();
+        setActive(i);
+      }
+    });
+  });
+
+  if (canHover) {
+    root.addEventListener("pointerleave", () => setActive(defaultIndex));
+  }
 }
 
 function renderEducation(data) {

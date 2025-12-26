@@ -1,158 +1,192 @@
 {
   "meta": {
-    "lastUpdated": "TODO: YYYY-MM-DD"
+    "lastUpdated": "2025-12-25"
   },
   "basics": {
-    "name": "乔知远",
-    "headline": "产品经理 / 增长与自动化方向",
-    "location": "上海",
-    "email": "qiaozhiyuan.pm@example.com",
-    "wechat": "T6666666",
-    "phone": "+86 138-0000-0000",
+    "name": "KAI CHEN（陈凯）",
+    "headline": "Growth PM / Product Ops（增长产品 / 产品运营）",
+    "location": "",
+    "email": "kai.chen@demo.com",
+    "wechat": "",
+    "phone": "",
     "links": [
-      { "label": "LinkedIn", "url": "https://linkedin.com/in/qiaozhiyuan" },
-      { "label": "GitHub", "url": "https://github.com/qiaozhiyuan" },
-      { "label": "作品集", "url": "https://qiaozhiyuan.site" }
+      { "label": "GitHub", "url": "https://github.com/kai-chen-demo" },
+      { "label": "主页", "url": "https://kai-demo.vercel.app" }
     ]
   },
   "highlights": [
-    "主导 B2B SaaS 产品从 0→1 上线：3 个月完成 MVP、落地 12 家试点客户，试用转付费率提升至 18%",
-    "搭建 数据指标体系 + 实验框架：将核心漏斗转化率提升 +23%，获客成本下降 -15%",
-    "通过自动化与工作流改造（表格/脚本/AI 助手），将跨团队重复性操作耗时减少 40%+",
-    "擅长“业务目标→产品方案→落地迭代→数据复盘”闭环，能在资源受限条件下推进交付",
-    "熟悉 AI 工具与自动化方案（如 LLM、RPA、低代码工作流），能把“想法”快速做成可用原型"
+    "AI 原生的增长型产品运营：把“增长策略”做成能跑的实验，把“运营流程”做成自动化工具，把“简历”做成可探索的产品。",
+    "关键词：vibe coding / AI workflow / growth experiment / lifecycle / analytics",
+    "Google Maps：连续贡献 Streak 任务体系 A/B（28 天），7 天二次贡献率 +11.8%。",
+    "Google Maps：首次贡献向导 A/B（14 天），首次贡献完成率 +14.2%，引导页跳失率 -10.5%。",
+    "Microsoft Teams：Recap 分享引导 A/B（21 天），分享率 +8.4%，被分享者二次打开 +12.7%。"
   ],
   "experience": [
     {
-      "title": "星瀚云科（B2B SaaS）｜高级产品经理",
-      "org": "星瀚云科",
-      "role": "高级产品经理",
-      "location": "上海",
-      "start": "2022.06",
-      "end": "2025.10",
+      "title": "Google｜Growth Product Intern（增长产品实习生，Google Maps）",
+      "org": "Google",
+      "role": "Growth Product Intern（Google Maps）",
+      "location": "Mountain View, CA",
+      "start": "2024.06",
+      "end": "2024.10",
       "summary": [
-        "负责企业知识管理与协作产品（SaaS），面向中型企业与成长型团队",
-        "主导“客户需求分析→产品规划→研发协同→上线→增长迭代”全流程"
+        "负责 Google Maps「本地贡献（Local contributions）」链路增长：从引导、激励到留存复访"
       ],
       "achievements": [
-        "牵头上线「文档权限与审计」模块：帮助客户通过合规审计，付费客户留存提升 +9%",
-        "将“注册→激活→核心使用”漏斗拆解为 6 个关键节点，推动改版与引导策略，激活率提升 +17%",
-        "搭建客户反馈闭环：NPS 访谈 + 工单标签体系 + 迭代节奏看板，需求响应周期缩短 -30%"
+        "主导 2 个 A/B 实验（任务体系、推送节奏），沉淀埋点口径与周复盘机制"
       ]
     },
     {
-      "title": "远航电商（消费互联网）｜产品经理（增长）",
-      "org": "远航电商",
-      "role": "产品经理（增长）",
-      "location": "杭州",
-      "start": "2020.03",
-      "end": "2022.05",
+      "title": "Microsoft｜Product Operations Intern（产品运营实习生，Microsoft Teams）",
+      "org": "Microsoft",
+      "role": "Product Operations Intern（Microsoft Teams）",
+      "location": "Redmond, WA",
+      "start": "2024.11",
+      "end": "2025.03",
       "summary": [
-        "负责交易链路与增长工具（优惠券、活动页、裂变）",
-        "与运营/数据/研发协作，通过实验与指标驱动改版"
+        "负责 Teams「会议体验」方向：会议前/中/后关键行为转化（预约、参会、回看、分享）"
       ],
       "achievements": [
-        "设计“优惠券推荐策略 + 领取动线优化”，订单转化率提升 +12%",
-        "建立活动 A/B 实验 SOP（假设→指标→实验→复盘），季度有效实验数提升 2 倍",
-        "重构活动配置后台：减少运营手工配置步骤 35%，大促期间出错率下降 -60%"
+        "搭建指标面板与异常告警，推动 1 个功能引导迭代上线"
       ]
     },
     {
-      "title": "澄明咨询｜商业分析实习生",
-      "org": "澄明咨询",
-      "role": "商业分析实习生",
-      "location": "北京",
-      "start": "2019.06",
-      "end": "2019.12",
+      "title": "Apple｜App Store Editorial Ops Intern（App Store 内容/运营实习生）",
+      "org": "Apple",
+      "role": "App Store Editorial Ops Intern",
+      "location": "Cupertino, CA",
+      "start": "2025.04",
+      "end": "2025.06",
       "summary": [
-        "协助进行行业研究、竞品分析、用户访谈整理",
-        "输出调研报告与数据分析图表，支持项目交付"
+        "参与 App Store “Today” 内容选题与专题页运营流程"
       ],
-      "achievements": []
+      "achievements": ["优化内容提交与素材校验的工作流（减少返工、缩短上线周期）"]
     }
   ],
   "projects": [
     {
-      "name": "企业知识库「权限与审计」模块（B2B SaaS）",
-      "context": "客户对合规与数据安全要求提升，缺少审计能力导致续费阻力",
+      "name": "Google Maps：Local Guides「连续贡献 Streak」任务体系（增长机制）",
+      "context": "新用户第一次贡献后复访率低，“想贡献但不知道下一步做啥”。目标：提升 7 天内二次贡献率、降低首次贡献后流失。",
       "actions": [
-        "访谈 15 家客户 + 梳理合规条款，抽象权限模型与审计事件规范",
-        "输出 PRD、原型、字段字典，并推动研发拆分里程碑交付",
-        "上线后建立“异常事件看板 + 周报机制”，持续优化审计体验"
+        "设计 3 层任务：新手（1 次贡献）→ 进阶（3 次）→ 彩蛋（7 天 streak）",
+        "任务卡片放在「贡献入口」下方，点击直接跳到可完成动作（拍照/评价/纠错）",
+        "推送策略改为“行为触发”：完成首次贡献后 24h 若未复访，推送下一步任务而不是泛提醒",
+        "补齐埋点：贡献类型、入口位置、任务卡曝光/点击、streak 断点原因"
       ],
-      "result": "续费谈判阻力明显下降，留存提升 +9%，企业客户满意度提升",
-      "evidence": [
-        { "label": "产品介绍页（示例）", "url": "https://example.com/audit" },
-        { "label": "需求文档（示例）", "url": "https://example.com/prd" }
-      ],
+      "result": "7 天二次贡献率 +11.8%；贡献入口点击率 +9.6%；Push 退订率无显著上升（<0.3%差异）。",
+      "evidence": [],
       "screenshots": [],
-      "reflection": "若重做，会更早引入“权限模板”减少配置成本，并提前做迁移工具"
+      "reflection": "奖励不是关键，“下一步动作”可达性才是关键；任务卡必须是“点了就能做”。",
+      "tags": ["增长机制", "留存", "A/B 实验", "Push"]
     },
     {
-      "name": "增长漏斗改造 + 新手引导体系",
-      "context": "新用户激活率低、核心功能触达慢，导致流失",
+      "name": "Google Maps：新用户「首次贡献引导」从说明页改成“1 分钟完成向导”（Onboarding）",
+      "context": "原引导页像说明书，跳失高；用户看完也不会做。目标：提升首次贡献完成率（First Contribution Completion）。",
       "actions": [
-        "搭建漏斗指标与埋点规范，定义“激活=完成 2 个关键动作”",
-        "设计分层引导：首次引导 / 场景任务 / 空状态提示",
-        "通过 A/B 实验验证不同引导策略效果"
+        "把引导改成 3 步向导：选类型（照片/评价/纠错）→ 示例（1 屏）→ 直接拍/填",
+        "文案从“讲功能”改为“给结果”：例如“用 20 秒帮其他人找到入口”",
+        "新增“可跳过”与“稍后提醒”（减少反感）",
+        "设计“失败兜底”：用户卡在权限/定位/网络时给出明确下一步"
       ],
-      "result": "激活率提升 +17%，核心功能触达时间缩短 -25%",
-      "evidence": [
-        { "label": "实验报告（示例）", "url": "https://example.com/abtest" },
-        { "label": "演示视频（示例）", "url": "https://example.com/demo" }
-      ],
+      "result": "首次贡献完成率 +14.2%；引导页跳失率 -10.5%；次日留存 +3.1%（对新贡献用户）。",
+      "evidence": [],
       "screenshots": [],
-      "reflection": "需要更精细化的用户分群（角色/行业）以提高引导命中率"
+      "reflection": "Onboarding 最重要不是“教育”，是“让用户完成第一个可见成果”。",
+      "tags": ["Onboarding", "转化", "A/B 实验"]
     },
     {
-      "name": "运营后台重构（活动配置自动化）",
-      "context": "运营活动配置流程复杂，易出错，影响大促稳定性",
+      "name": "Microsoft Teams：会议后「Recap 分享引导」提升传播与复用（产品运营+增长）",
+      "context": "很多用户会看 Recap，但不会“分享给没参会的人”，价值没扩散。目标：提高 Recap 的分享率与二次打开率。",
       "actions": [
-        "梳理现有流程与痛点，拆解为“模板化配置 + 校验规则 + 一键发布”",
-        "引入表单校验与预览机制，减少返工",
-        "做权限与审批流，降低误操作风险"
+        "在 Recap 页新增“一键分享”浮层：对未参会同事推荐分享（按组织常见协作对象）",
+        "把分享 CTA 从按钮改为“场景化文案”：例如“把要点发给没参会的人（30s）”",
+        "调整默认权限提示：减少“怕泄露”带来的犹豫（写清楚仅组织内可见）",
+        "做分层实验：对“参会人数≥6 且会后 24h 内打开 Recap”的用户优先展示"
       ],
-      "result": "运营配置步骤减少 35%，出错率下降 -60%",
-      "evidence": [
-        { "label": "流程图（示例）", "url": "https://example.com/flow" },
-        { "label": "截图（示例）", "url": "https://example.com/screens" }
-      ],
+      "result": "Recap 分享率 +8.4%；被分享者二次打开率 +12.7%；负反馈下降 18%。",
+      "evidence": [],
       "screenshots": [],
-      "reflection": "后续可以加入“活动复用市场”，进一步降低配置成本"
+      "reflection": "企业产品的增长，很多来自“把价值传递给下一位用户”的链路优化。",
+      "tags": ["B2B", "传播", "增长实验"]
+    },
+    {
+      "name": "Microsoft Teams：会议体验数据面板 + 异常告警（数据体系项目）",
+      "context": "团队对“参会、回看、分享、互动”的口径不统一，复盘经常吵架。目标：统一口径并建立日常监控（异常当天发现）。",
+      "actions": [
+        "建立指标字典：参会率、迟到率、Recap 打开率、回看完成率、分享率、互动率",
+        "把埋点拆成事件级别：view_recap / click_share / open_shared_link / watch_recording 等",
+        "在 Looker/Power BI 搭分层：组织规模、会议人数、行业、客户端（桌面/移动）",
+        "加异常告警：例如“某客户端版本回看完成率下降 >5%”自动提示到 Slack/Teams Channel"
+      ],
+      "result": "复盘会议时长 -30%；定位 2 个真实问题（移动端权限提示/某版本回看卡顿）；实验设计与迭代速度提升。",
+      "evidence": [],
+      "screenshots": [],
+      "reflection": "增长前要先“修语言”，指标是团队协作的共同语言。",
+      "tags": ["数据体系", "指标", "监控", "告警"]
+    },
+    {
+      "name": "Apple App Store：Today 专题「效率工具周」策划与上线流程优化（内容运营）",
+      "context": "专题上线流程多方协作（编辑/设计/本地化/素材），返工多、周期长。目标：缩短从选题到上线周期并减少素材返工。",
+      "actions": [
+        "把“素材提交”改成标准化清单：尺寸、命名、版权声明、截图版本号",
+        "做 Notion 模板：选题 → 素材 → 审核 → 本地化 → 上线（每一步有负责人和截止时间）",
+        "增加“预检查”：在提交前自动校验素材规格（减少被退回）",
+        "复盘历史 10 个专题，整理返工原因 TOP5 并逐一对齐规则"
+      ],
+      "result": "专题平均上线周期 10 天→7 天；素材返工次数 -35%；协作节奏更稳。",
+      "evidence": [],
+      "screenshots": [],
+      "reflection": "内容运营也可以像产品一样做“流程体验优化”。",
+      "tags": ["流程优化", "内容运营", "协作"]
+    },
+    {
+      "name": "个人作品：Vibe Coding 做的「Growth Portfolio」互动简历站（前沿+个性）",
+      "context": "把简历做成“可探索的产品”，不是 PDF。目标：10 秒看懂我是谁，1 分钟看到作品，3 分钟产生可信感。",
+      "actions": [
+        "主页 Hero 设计成“电子名片”：一句话定位 + 三个入口（Projects / Timeline / Contact）",
+        "Timeline 做成可拖拽/可滚动的“线性交互浏览”（像看产品迭代史）",
+        "Projects 做成“展馆式浏览”：每个项目卡片可展开看到目标/过程/结果",
+        "Skills 做成 icon cloud：点击技能会高亮关联项目（让技能不是空话）"
+      ],
+      "result": "3 次模拟面试反馈：更记得住我做过什么、更像产品人；把站当作个人增长实验，持续迭代文案/布局/排序并观察停留与点击。",
+      "evidence": [],
+      "screenshots": [],
+      "reflection": "作品集本身就是产品，交互与叙事就是你的产品能力证明。",
+      "tags": ["个人项目", "前端", "vibe coding", "作品集"]
     }
   ],
   "skills": [
     {
-      "group": "产品能力",
+      "group": "增长",
       "items": [
-        "需求分析与信息架构：用户访谈、竞品分析、JTBD、PRD/原型",
-        "方案设计与落地：跨团队协作、里程碑拆解、上线与灰度、迭代节奏管理",
-        "数据与增长：指标体系、漏斗分析、A/B 实验设计、复盘与策略迭代"
+        "漏斗分析、用户分层、生命周期运营、激励机制、A/B 实验"
       ]
     },
     {
-      "group": "工具与技术（能独立完成原型/分析/自动化）",
+      "group": "产品",
       "items": [
-        "原型与协作：Figma / FigJam / Notion / Jira",
-        "数据分析：Excel / SQL（基础）/ 数据可视化（基础）",
-        "自动化与 AI：工作流工具（如 n8n/类似平台）、脚本思维、LLM 辅助（提示词设计、内容结构化）"
+        "PRD、信息架构、Onboarding、埋点方案、跨团队推进"
       ]
     },
     {
-      "group": "沟通与影响力",
-      "items": ["跨团队协作、需求共识推进、文档表达、会议主持与复盘"]
+      "group": "数据",
+      "items": ["SQL（基础）、Looker/Power BI、GA4/Amplitude"]
+    },
+    {
+      "group": "前沿工具链",
+      "items": ["vibe coding（快速 demo）、自动化脚本、Next.js/Vercel、Figma/Notion"]
     }
   ],
   "education": [
     {
-      "school": "华东理工大学",
-      "degree": "本科",
-      "major": "信息管理与信息系统",
-      "start": "2016.09",
-      "end": "2020.06"
+      "school": "Harvard University",
+      "degree": "B.A. in Economics",
+      "major": "Minor in Computer Science",
+      "start": "2021.09",
+      "end": "2025.05"
     }
   ],
-  "certifications": ["Google Data Analytics Certificate（示例）", "Scrum Product Owner（示例）"],
+  "certifications": ["Harvard Product Lab（产品实践项目）", "AI Builders 社群（工具共创）"],
   "download": {
     "label": "下载 PDF 简历",
     "pdfPath": "./resume.pdf"
