@@ -149,11 +149,86 @@ function initReveal() {
   for (const el of revealables) obs.observe(el);
 }
 
+function initExperienceTimeline(timelineRoot) {
+  if (!timelineRoot) return;
+  if (timelineRoot.dataset.timelineInit === "true") return;
+  timelineRoot.dataset.timelineInit = "true";
+
+  const OFFSET = 0.85;
+  let obs = null;
+
+  const getRows = () =>
+    Array.from(timelineRoot.querySelectorAll(".cd-timeline__block"))
+      .map((block) => {
+        const img = block.querySelector(".cd-timeline__img");
+        const content = block.querySelector(".cd-timeline__content");
+        if (!img || !content) return null;
+        return { block, img, content };
+      })
+      .filter(Boolean);
+
+  const apply = () => {
+    if (obs) obs.disconnect();
+    obs = null;
+
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+    const desktop = window.matchMedia?.("(min-width: 900px)")?.matches ?? false;
+    const rows = getRows();
+
+    for (const row of rows) {
+      row.img.classList.remove("cd-timeline__img--hidden", "cd-timeline__img--bounce-in");
+      row.content.classList.remove("cd-timeline__content--hidden", "cd-timeline__content--bounce-in");
+    }
+
+    if (reduce || !desktop || !("IntersectionObserver" in window)) return;
+
+    obs = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const row = rows.find((r) => r.block === entry.target);
+          if (!row) continue;
+          if (!row.content.classList.contains("cd-timeline__content--hidden")) {
+            obs?.unobserve(row.block);
+            continue;
+          }
+
+          row.img.classList.remove("cd-timeline__img--hidden");
+          row.content.classList.remove("cd-timeline__content--hidden");
+          row.img.classList.add("cd-timeline__img--bounce-in");
+          row.content.classList.add("cd-timeline__content--bounce-in");
+          obs?.unobserve(row.block);
+        }
+      },
+      { root: null, threshold: 0.22, rootMargin: "0px 0px -10% 0px" }
+    );
+
+    for (const row of rows) {
+      const shouldHide = row.block.getBoundingClientRect().top > window.innerHeight * OFFSET;
+      if (!shouldHide) continue;
+      row.img.classList.add("cd-timeline__img--hidden");
+      row.content.classList.add("cd-timeline__content--hidden");
+      obs.observe(row.block);
+    }
+  };
+
+  apply();
+
+  const mqDesktop = window.matchMedia?.("(min-width: 900px)");
+  const mqReduce = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+  if (mqDesktop?.addEventListener) mqDesktop.addEventListener("change", apply);
+  else mqDesktop?.addListener?.(apply);
+  if (mqReduce?.addEventListener) mqReduce.addEventListener("change", apply);
+  else mqReduce?.addListener?.(apply);
+}
+
 function renderExperience(data) {
   const items = Array.isArray(data.experience) ? data.experience : [];
   const root = document.getElementById("experienceList");
 
   if (!items.length) {
+    root.classList.add("stack");
+    root.classList.remove("cd-timeline", "js-cd-timeline");
     root.replaceChildren(
       el("div", { class: "card" }, [
         el("p", { class: "card-title", text: "TODO：补充经历" }),
@@ -163,24 +238,49 @@ function renderExperience(data) {
     return;
   }
 
-  root.replaceChildren(
-    ...items.map((it) => {
-      const meta = [it.org, it.role, formatRange(it.start, it.end), it.location].filter(Boolean).join("｜");
-      const summary = Array.isArray(it.summary) ? it.summary : [];
-      const achievements = Array.isArray(it.achievements) ? it.achievements : [];
-      return el("article", { class: "card" }, [
-        el("h3", { class: "card-title", text: it.title ?? `${it.org ?? "TODO：公司"}｜${it.role ?? "TODO：岗位"}` }),
-        el("p", { class: "card-meta", text: meta }),
+  root.classList.remove("stack");
+  root.classList.add("cd-timeline", "js-cd-timeline");
+
+  const ACCENT_PAIRS = [
+    ["var(--c-pink)", "var(--c-cyan)"],
+    ["var(--c-purple)", "var(--c-lime)"],
+    ["var(--c-cyan)", "var(--c-yellow)"],
+    ["var(--c-lime)", "var(--c-pink)"],
+  ];
+
+  const blocks = items.map((it, index) => {
+    const [accent, accent2] = ACCENT_PAIRS[index % ACCENT_PAIRS.length];
+    const titleText = it.title ?? `${it.org ?? "TODO：公司"}｜${it.role ?? "TODO：岗位"}`;
+    const dateText = formatRange(it.start, it.end);
+    const metaText = [it.location, !it.location ? it.role : null].filter(Boolean).join("｜");
+    const summary = Array.isArray(it.summary) ? it.summary : [];
+    const achievements = Array.isArray(it.achievements) ? it.achievements : [];
+    const orgKey = String(it.org ?? "").trim();
+    const mark = orgKey ? orgKey.slice(0, 1).toUpperCase() : "•";
+
+    return el("div", { class: "cd-timeline__block", dataset: { index } }, [
+      el("div", { class: "cd-timeline__img", "aria-hidden": "true", style: `--tl-accent:${accent};--tl-accent2:${accent2};` }, [
+        el("span", { class: "cd-timeline__mark", text: mark }),
+      ]),
+      el("article", { class: "cd-timeline__content" }, [
+        el("div", { class: "cd-timeline__content-header" }, [
+          el("h3", { class: "card-title", text: titleText }),
+          dateText ? el("span", { class: "cd-timeline__date", text: dateText }) : null,
+        ]),
+        metaText ? el("p", { class: "card-meta", text: metaText }) : null,
         summary.length ? el("ul", { class: "list" }, summary.map((s) => el("li", { text: s }))) : null,
         achievements.length
-          ? el("div", {}, [
+          ? el("div", { class: "cd-timeline__section" }, [
               el("p", { class: "card-meta", text: "关键成果" }),
               el("ul", { class: "list" }, achievements.map((a) => el("li", { text: a }))),
             ])
           : null,
-      ]);
-    })
-  );
+      ]),
+    ]);
+  });
+
+  root.replaceChildren(el("div", { class: "cd-timeline__container" }, blocks));
+  initExperienceTimeline(root);
 }
 
 let portfolioProjectsInitialized = false;
