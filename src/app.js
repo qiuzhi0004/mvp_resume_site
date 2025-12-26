@@ -1191,6 +1191,223 @@ function renderSkills(data) {
   }
 }
 
+function renderBootcamp(_data) {
+  const board = document.getElementById("bootcampBoard");
+  if (!board) return;
+  if (board.dataset.init === "true") return;
+  board.dataset.init = "true";
+
+  const PHOTO_URLS = Array.from({ length: 11 }, (_, i) => `./other-photos/${i + 1}.png`);
+  const photos = PHOTO_URLS.map((src, i) => {
+    const index = i + 1;
+    return el(
+      "div",
+      {
+        class: "bootcamp-photo",
+        role: "button",
+        tabindex: "0",
+        "aria-label": `训练营照片 ${index}（拖拽摆放，点击聚焦）`,
+        dataset: { index },
+      },
+      [
+        el("div", { class: "bootcamp-photo-inner" }, [
+          el("img", {
+            class: "bootcamp-photo-img",
+            src,
+            alt: `训练营照片 ${index}`,
+            loading: "lazy",
+            decoding: "async",
+            draggable: "false",
+          }),
+          el("div", { class: "bootcamp-photo-caption", text: `Bootcamp · ${index}` }),
+        ]),
+      ]
+    );
+  });
+
+  board.replaceChildren(...photos);
+  initBootcampPile(board, photos);
+}
+
+function initBootcampPile(board, items) {
+  if (!board || !items?.length) return;
+  if (board.dataset.pileInit === "true") return;
+  board.dataset.pileInit = "true";
+  board.addEventListener("dragstart", (e) => e.preventDefault());
+
+  let z = 20;
+  let active = null;
+  const state = new Map();
+
+  const rand = (min, max) => min + Math.random() * (max - min);
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+  const getBounds = (item) => {
+    const margin = 22;
+    const w = item.offsetWidth || 220;
+    const h = item.offsetHeight || 260;
+    const maxX = Math.max(0, board.clientWidth / 2 - w / 2 - margin);
+    const maxY = Math.max(0, board.clientHeight / 2 - h / 2 - margin);
+    return { maxX, maxY };
+  };
+
+  const applyTransform = (item, s) => {
+    item.style.setProperty("--x", `${s.x}px`);
+    item.style.setProperty("--y", `${s.y}px`);
+    item.style.setProperty("--r", `${s.r}deg`);
+    item.style.setProperty("--s", String(s.s));
+  };
+
+  const ensureState = (item) => {
+    if (state.has(item)) return state.get(item);
+    const s = { x: 0, y: 0, r: 0, s: 1, drag: null };
+    state.set(item, s);
+    return s;
+  };
+
+  const scatter = () => {
+    items.forEach((item) => {
+      const b = getBounds(item);
+      const s = ensureState(item);
+      s.x = rand(-b.maxX, b.maxX);
+      s.y = rand(-b.maxY, b.maxY);
+      s.r = rand(-16, 16);
+      s.s = rand(0.98, 1.04);
+      applyTransform(item, s);
+      item.style.zIndex = String(++z);
+      item.dataset.active = "false";
+    });
+    board.dataset.focus = "false";
+    active = null;
+  };
+
+  const deactivate = () => {
+    if (!active) return;
+    const prev = active.dataset.prev ? JSON.parse(active.dataset.prev) : null;
+    const s = ensureState(active);
+    if (prev) {
+      s.x = Number(prev.x) || 0;
+      s.y = Number(prev.y) || 0;
+      s.r = Number(prev.r) || 0;
+      s.s = Number(prev.s) || 1;
+      applyTransform(active, s);
+    }
+    active.dataset.active = "false";
+    active.removeAttribute("data-prev");
+    active = null;
+    board.dataset.focus = "false";
+  };
+
+  const activate = (item) => {
+    if (active === item) {
+      deactivate();
+      return;
+    }
+    deactivate();
+
+    const s = ensureState(item);
+    item.dataset.prev = JSON.stringify({ x: s.x, y: s.y, r: s.r, s: s.s });
+
+    s.x = 0;
+    s.y = 0;
+    s.r = 0;
+    s.s = 1.9;
+    applyTransform(item, s);
+    item.style.zIndex = String(++z);
+    item.dataset.active = "true";
+    active = item;
+    board.dataset.focus = "true";
+  };
+
+  const normalizeAll = () => {
+    items.forEach((item) => {
+      const s = ensureState(item);
+      if (item.dataset.active === "true") return;
+      const b = getBounds(item);
+      const nx = clamp(s.x, -b.maxX, b.maxX);
+      const ny = clamp(s.y, -b.maxY, b.maxY);
+      if (nx === s.x && ny === s.y) return;
+      s.x = nx;
+      s.y = ny;
+      applyTransform(item, s);
+    });
+  };
+
+  scatter();
+
+  // Re-scatter once layout is stable (images might affect sizing).
+  requestAnimationFrame(() => requestAnimationFrame(scatter));
+
+  items.forEach((item) => {
+    const s = ensureState(item);
+
+    item.addEventListener("pointerdown", (e) => {
+      if (!(e instanceof PointerEvent)) return;
+      if (!e.isPrimary) return;
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      e.preventDefault();
+      item.setPointerCapture(e.pointerId);
+      item.style.zIndex = String(++z);
+      item.dataset.dragging = "true";
+      s.drag = {
+        id: e.pointerId,
+        startX: e.clientX,
+        startY: e.clientY,
+        baseX: s.x,
+        baseY: s.y,
+        moved: false,
+      };
+    });
+
+    item.addEventListener("pointermove", (e) => {
+      if (!(e instanceof PointerEvent)) return;
+      if (!s.drag || s.drag.id !== e.pointerId) return;
+      e.preventDefault();
+
+      const dx = e.clientX - s.drag.startX;
+      const dy = e.clientY - s.drag.startY;
+      if (!s.drag.moved && Math.hypot(dx, dy) > 3) s.drag.moved = true;
+      if (item.dataset.active === "true") return;
+
+      const b = getBounds(item);
+      s.x = clamp(s.drag.baseX + dx, -b.maxX, b.maxX);
+      s.y = clamp(s.drag.baseY + dy, -b.maxY, b.maxY);
+      applyTransform(item, s);
+    });
+
+    const endDrag = (e) => {
+      if (!(e instanceof PointerEvent)) return;
+      if (!s.drag || s.drag.id !== e.pointerId) return;
+      e.preventDefault();
+      const moved = s.drag.moved;
+      s.drag = null;
+      item.removeAttribute("data-dragging");
+      if (!moved) activate(item);
+    };
+
+    item.addEventListener("pointerup", endDrag);
+    item.addEventListener("pointercancel", endDrag);
+
+    item.addEventListener("keydown", (e) => {
+      if (e.code === "Enter" || e.code === "Space") {
+        e.preventDefault();
+        activate(item);
+      }
+    });
+  });
+
+  board.addEventListener("pointerdown", (e) => {
+    if (!(e.target instanceof HTMLElement)) return;
+    if (e.target.closest(".bootcamp-photo")) return;
+    deactivate();
+  });
+
+  window.addEventListener("resize", () => {
+    window.clearTimeout(normalizeAll._t);
+    normalizeAll._t = window.setTimeout(normalizeAll, 120);
+  });
+}
+
 function renderEducation(data) {
   const education = Array.isArray(data.education) ? data.education : [];
   const certs = Array.isArray(data.certifications) ? data.certifications : [];
@@ -1420,6 +1637,7 @@ async function main() {
   renderExperience(data);
   renderProjects(data);
   renderSkills(data);
+  renderBootcamp(data);
   renderEducation(data);
   renderContact(data);
   renderDownload(data);
