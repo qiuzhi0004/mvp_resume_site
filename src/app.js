@@ -183,146 +183,689 @@ function renderExperience(data) {
   );
 }
 
-function normalizeTag(tag) {
-  if (!tag) return "";
-  const t = String(tag).trim();
-  if (!t) return "";
-  if (/^todo/i.test(t) || t.startsWith("TODO")) return "";
-  return t;
-}
+let portfolioProjectsInitialized = false;
 
-function collectTags(projects) {
-  const tagSet = new Set();
-  for (const p of projects) {
-    const tags = Array.isArray(p.tags) ? p.tags : [];
-    for (const t of tags.map(normalizeTag).filter(Boolean)) tagSet.add(t);
-  }
-  return Array.from(tagSet).sort((a, b) => a.localeCompare(b, "zh-CN"));
-}
+function initPortfolioProjectsModule() {
+  if (portfolioProjectsInitialized) return;
 
-function renderProjectControls({ tags, activeTag, onChange }) {
-  const root = document.getElementById("projectsControls");
-  if (!root) return;
+  const moduleRoot = document.getElementById("portfolio");
+  const view3d = document.getElementById("view3d");
+  const view2d = document.getElementById("view2d");
+  const btnToList = document.getElementById("btnToList");
+  const btnToGallery = document.getElementById("btnToGallery");
+  const scene = document.getElementById("scene");
+  const world = document.getElementById("world");
+  const ribbon = document.getElementById("ribbon");
 
-  if (!tags.length) {
-    root.replaceChildren();
+  const modalMask = document.getElementById("modalMask");
+  const mTitle = document.getElementById("mTitle");
+  const mHook = document.getElementById("mHook");
+  const mBody = document.getElementById("mBody");
+  const mClose = document.getElementById("mClose");
+
+  const filters = document.getElementById("filters");
+  const masonry = document.getElementById("masonry");
+  const count = document.getElementById("count");
+  const searchInput = document.getElementById("searchInput");
+
+  if (
+    !moduleRoot ||
+    !view3d ||
+    !view2d ||
+    !btnToList ||
+    !btnToGallery ||
+    !scene ||
+    !world ||
+    !ribbon ||
+    !modalMask ||
+    !mTitle ||
+    !mHook ||
+    !mBody ||
+    !mClose ||
+    !filters ||
+    !masonry ||
+    !count ||
+    !searchInput
+  ) {
     return;
   }
 
-  const select = el(
-    "select",
+  portfolioProjectsInitialized = true;
+
+  /* ==========================
+     12 works data (from 2 作品集模块 - 参考代码.html)
+     ========================== */
+  const projects = [
+    // Prototype (4)
     {
-      class: "select",
-      "aria-label": "按项目标签筛选",
-      onchange: (e) => onChange(e.target.value),
-    },
-    [
-      el("option", { value: "", text: "全部项目" }),
-      ...tags.map((t) => el("option", { value: t, text: t, selected: t === activeTag ? "selected" : null })),
-    ]
-  );
-
-  root.replaceChildren(
-    el("div", { class: "filters" }, [
-      el("span", { class: "filters-label", text: "标签筛选" }),
-      select,
-      activeTag ? el("button", { class: "btn", type: "button", text: "清除", onclick: () => onChange("") }) : null,
-    ])
-  );
-}
-
-function renderProjects(data) {
-  const items = Array.isArray(data.projects) ? data.projects : [];
-  const root = document.getElementById("projectsGrid");
-  root.classList.add("cols-2");
-
-  const tags = collectTags(items);
-  const state = { activeTag: "" };
-  const render = () => {
-    const filtered = state.activeTag
-      ? items.filter((p) => (Array.isArray(p.tags) ? p.tags : []).map(normalizeTag).includes(state.activeTag))
-      : items;
-
-    renderProjectControls({
-      tags,
-      activeTag: state.activeTag,
-      onChange: (t) => {
-        state.activeTag = t;
-        render();
+      id: "P01",
+      type: "prototype",
+      title: "Inspo Vault 灵感收藏夹",
+      hook: "把“刷到的好东西”变成可管理的灵感资产：一键收藏、自动归类、随时找回。",
+      tags: ["Prototype", "内容整理", "信息架构"],
+      cover: { kind: "image", src: "prototype-picture/p1-1.png", badge: "Prototype" },
+      gallery: { label: "灵感收藏夹", chips: ["Figma原型", "内容整理"] },
+      detail: {
+        what: "一个“收藏→归类→再利用”的原型：让用户收藏后不再丢失、也不再难找。",
+        highlights: ["收藏动作极短：不打断阅读", "自动归类 + 标签体系：更像“灵感仓库”", "搜索与回访路径：把灵感变成可复用资产"],
+        deliverables: ["高保真原型（流程）", "关键组件（卡片/标签/收藏反馈）", "交互细节说明"],
+        images: ["prototype-picture/p1-2.png", "prototype-picture/p1-3.png"],
       },
-    });
+    },
+    {
+      id: "P02",
+      type: "prototype",
+      title: "Challenge Hub 话题挑战活动页",
+      hook: "规则一眼懂、投稿三步走、榜单刺激参与：把活动从“看热闹”变成“愿意投稿”。",
+      tags: ["Prototype", "活动页", "运营氛围"],
+      cover: { kind: "image", src: "prototype-picture/p2-1.png", badge: "Prototype" },
+      gallery: { label: "话题挑战活动页", chips: ["活动结构", "投稿三步"] },
+      detail: {
+        what: "内容社区常见活动模板：让用户快速理解规则、轻松投稿，并愿意传播。",
+        highlights: ["规则模块化：减少信息负担", "投稿路径压缩：一步一步引导完成", "榜单/优秀作品：增强参与动机"],
+        deliverables: ["活动页原型", "投稿流程原型", "组件拆解（规则/榜单/CTA）"],
+        images: ["prototype-picture/p2-2.png", "prototype-picture/p2-3.png"],
+      },
+    },
+    {
+      id: "P03",
+      type: "prototype",
+      title: "Collection Hub 专题合集页",
+      hook: "把散落的内容串成“目录式攻略”：章节导航 + 继续阅读，让内容消费更像完成一件事。",
+      tags: ["Prototype", "专题编排", "导航体验"],
+      cover: { kind: "image", src: "prototype-picture/p3-1.png", badge: "Prototype" },
+      gallery: { label: "专题合集页", chips: ["目录结构", "继续阅读"] },
+      detail: {
+        what: "专题页原型：把内容组织成可连续阅读的路径，提高“看完/收藏专题”的概率。",
+        highlights: ["封面+章节列表：一眼理解全貌", "进度提示：降低中断成本", "收藏专题：把内容打包带走"],
+        deliverables: ["专题页原型", "章节导航交互", "信息架构示意"],
+        images: ["prototype-picture/p3-2.png", "prototype-picture/p3-3.png"],
+      },
+    },
+    {
+      id: "P04",
+      type: "prototype",
+      title: "Creator Brand Page 创作者名片页",
+      hook: "让创作者像“个人品牌”被理解：精选合集、代表作、常见问题、合作入口一次讲清楚。",
+      tags: ["Prototype", "个人品牌", "内容社区"],
+      cover: { kind: "image", src: "prototype-picture/p4-1.png", badge: "Prototype" },
+      gallery: { label: "创作者名片页", chips: ["品牌主页", "合集展示"] },
+      detail: {
+        what: "创作者主页原型：不仅展示内容，更让别人快速理解你擅长什么、怎么看你的代表作。",
+        highlights: ["精选合集：降低发现成本", "代表作墙：建立信任", "合作入口：更像“可联系的品牌”"],
+        deliverables: ["主页原型", "合集/代表作模块", "合作卡片组件"],
+        images: ["prototype-picture/p4-2.png", "prototype-picture/p4-3.png"],
+      },
+    },
 
-    if (!filtered.length) {
-      root.replaceChildren(
-        el("div", { class: "card" }, [
-          el("p", { class: "card-title", text: "没有匹配的项目" }),
-          el("p", { class: "card-meta", text: "尝试清除筛选条件。" }),
-        ])
-      );
-      return;
+    // Demo (4)
+    {
+      id: "D01",
+      type: "demo",
+      title: "Masonry Card Kit 瀑布流卡片组件展厅",
+      hook: "把内容社区常见卡片做成可复用组件：封面、标签、状态、hover 微交互一页看全。",
+      tags: ["Demo", "Figma→Web", "组件库"],
+      cover: { kind: "image", src: "prototype-picture/p5-1.png", badge: "Demo" },
+      gallery: { label: "瀑布流卡片组件库", chips: ["可运行Demo", "组件展厅"] },
+      detail: {
+        what: "一个能跑的组件画廊：展示卡片布局、状态与细节，实现“设计→落地”的闭环。",
+        highlights: ["卡片变体：不同封面/标签/信息密度", "状态体系：hover/active/空态占位", "可复用：更像轻量 design system"],
+        deliverables: ["Web Demo 页面", "组件矩阵", "样式规范（可扩展）"],
+        images: ["prototype-picture/p5-2.png", "prototype-picture/p5-3.png"],
+      },
+    },
+    {
+      id: "D02",
+      type: "demo",
+      title: "Micro-interactions Pack 微交互动效小剧场",
+      hook: "收藏/关注/筛选标签 3 个动效：反馈明确但不打扰，让用户知道“我刚刚做成了什么”。",
+      tags: ["Demo", "动效", "产品质感"],
+      cover: { kind: "image", src: "prototype-picture/p6-1.png", badge: "Demo" },
+      gallery: { label: "微交互动效合集", chips: ["可运行Demo", "动效配方"] },
+      detail: {
+        what: "3 个常用动效 Demo：用最小的动效成本，换最大“确定性反馈”。",
+        highlights: ["收藏：轻确认+不抢戏", "关注：状态明确+可撤销感", "筛选：chip 切换+列表过渡"],
+        deliverables: ["Web Demo", "动效分镜/帧", "动效节奏说明"],
+        images: ["prototype-picture/p6-2.png", "prototype-picture/p6-3.png"],
+      },
+    },
+    {
+      id: "D03",
+      type: "demo",
+      title: "Share Card Generator 分享卡片生成器",
+      hook: "切换主题色/布局/封面样式，一键生成更体面的分享卡片，适配传播场景。",
+      tags: ["Demo", "传播表达", "模板生成"],
+      cover: { kind: "image", src: "prototype-picture/p7-1.png", badge: "Demo" },
+      gallery: { label: "分享卡片生成器", chips: ["模板切换", "传播表达"] },
+      detail: {
+        what: "一个可玩的小工具：让“分享出去”更像作品而不是广告。",
+        highlights: ["多模板：不同信息结构", "主题色/布局切换：快速适配内容类型", "输出预览：一眼看出传播效果"],
+        deliverables: ["Web Demo", "模板墙", "分享场景预览"],
+        images: ["prototype-picture/p7-2.png", "prototype-picture/p7-3.png"],
+      },
+    },
+    {
+      id: "D04",
+      type: "demo",
+      title: "Landing First Screen Switcher 落地页首屏模板切换器",
+      hook: "3 套“首屏秒懂价值”模板：强主视觉/强对比/强步骤，点击切换对比表达效率。",
+      tags: ["Demo", "落地页", "转化表达"],
+      cover: { kind: "image", src: "prototype-picture/p8-1.png", badge: "Demo" },
+      gallery: { label: "落地页首屏模板", chips: ["模板对比", "秒懂价值"] },
+      detail: {
+        what: "专注首屏：让用户 3 秒内明白“这是干什么、对我有什么用、下一步点哪里”。",
+        highlights: ["三种结构：适配不同产品/内容", "强调层级：减少理解成本", "可复用：当成落地页骨架"],
+        deliverables: ["Web Demo", "首屏结构板", "移动端预览"],
+        images: ["prototype-picture/p8-2.png", "prototype-picture/p8-3.png"],
+      },
+    },
+
+    // Pack (4)
+    {
+      id: "K01",
+      type: "pack",
+      title: "Cover Style Library 封面风格库（10套）",
+      hook: "攻略/清单/对比/测评/避雷/合集/流程…统一画风模板墙，套图就能出高级封面。",
+      tags: ["Pack", "封面模板", "内容网感"],
+      cover: { kind: "image", src: "prototype-picture/p9-1.png", badge: "Pack" },
+      gallery: { label: "封面风格库", chips: ["10套模板", "内容网感"] },
+      detail: {
+        what: "内容社区封面模板库：统一视觉语言，让“看起来专业”变得可复制。",
+        highlights: ["模板化：不同内容类型快速套用", "统一画风：整站更像品牌", "可扩展：新增类型也不破风格"],
+        deliverables: ["封面模板墙", "单模板变体", "使用规范（简版）"],
+        images: ["prototype-picture/p9-2.png", "prototype-picture/p9-3.png"],
+      },
+    },
+    {
+      id: "K02",
+      type: "pack",
+      title: "Topic Branding Mini-kit 话题视觉小套件",
+      hook: "一个话题想做大就要像品牌：色板、字体层级、徽章、卡片样式一套打包。",
+      tags: ["Pack", "视觉规范", "专题品牌"],
+      cover: { kind: "image", src: "prototype-picture/p10-1.png", badge: "Pack" },
+      gallery: { label: "话题视觉小套件", chips: ["视觉规范", "专题品牌"] },
+      detail: {
+        what: "把话题从“临时活动”做成“可持续品牌”：页面到卡片保持一致。",
+        highlights: ["色板+层级：统一表达", "徽章/标签：强化识别", "组件复用：活动页/内容页通吃"],
+        deliverables: ["Mini kit board", "组件集合", "话题页预览"],
+        images: ["prototype-picture/p10-2.png", "prototype-picture/p10-3.png"],
+      },
+    },
+    {
+      id: "K03",
+      type: "pack",
+      title: "Community Stickers & Badges 社区贴纸与徽章包",
+      hook: "点赞表情、成就徽章、挑战完成章…一套小东西把“社区氛围”拉满。",
+      tags: ["Pack", "贴纸徽章", "社区感"],
+      cover: { kind: "image", src: "prototype-picture/p11-1.png", badge: "Pack" },
+      gallery: { label: "贴纸与徽章包", chips: ["社区氛围", "统一风格"] },
+      detail: {
+        what: "把“氛围感”做成可复用资产：在评论区、活动页、个人主页都能直接用。",
+        highlights: ["统一线性风格：不杂乱", "层级清晰：适配不同密度界面", "应用场景：评论/活动/主页"],
+        deliverables: ["贴纸徽章墙", "徽章等级示意", "应用场景 mock"],
+        images: ["prototype-picture/p11-2.png", "prototype-picture/p11-3.png"],
+      },
+    },
+    {
+      id: "K04",
+      type: "pack",
+      title: "Motion Recipes 动效配方包（可复用规范）",
+      hook: "进入/退出、弹层、收藏反馈、筛选切换…把动效做成可复用“配方卡”。",
+      tags: ["Pack", "动效规范", "产品质感"],
+      cover: { kind: "image", src: "prototype-picture/p12-1.png", badge: "Pack" },
+      gallery: { label: "动效配方包", chips: ["节奏规范", "可复用"] },
+      detail: {
+        what: "用“配方卡”把动效讲清楚：做得快、做得稳、做得一致。",
+        highlights: ["节奏统一：不忽快忽慢", "缓动克制：不抢内容", "可复用：组件级动效"],
+        deliverables: ["动效配方卡", "分镜帧", "时间/缓动说明"],
+        images: ["prototype-picture/p12-2.png", "prototype-picture/p12-3.png"],
+      },
+    },
+  ];
+
+  const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
+
+  function showList() {
+    view3d.classList.remove("show");
+    view2d.classList.add("show");
+    btnToList.style.display = "none";
+    if (!isMobile()) btnToGallery.style.display = "inline-block";
+  }
+
+  function showGallery() {
+    view2d.classList.remove("show");
+    view3d.classList.add("show");
+    btnToGallery.style.display = "none";
+    btnToList.style.display = "inline-block";
+  }
+
+  btnToList.onclick = showList;
+  btnToGallery.onclick = showGallery;
+
+  function applyResponsiveDefault() {
+    if (isMobile()) {
+      showList();
+      btnToGallery.style.display = "none";
+    } else {
+      showGallery();
     }
+  }
 
-    root.replaceChildren(
-      ...filtered.map((p) => {
-        const evidence = Array.isArray(p.evidence) ? p.evidence : [];
-        const actions = Array.isArray(p.actions) ? p.actions : [];
-        const screenshots = Array.isArray(p.screenshots) ? p.screenshots : [];
-        const tags = (Array.isArray(p.tags) ? p.tags : []).map(normalizeTag).filter(Boolean);
+  function escapeHtml(str) {
+    return String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
 
-        const links =
-          evidence.length || screenshots.length
-            ? el("div", { class: "pill-row" }, [
-                ...evidence.map((l) => el("span", { class: "pill" }, makeLink(l.url, l.label))),
-                ...screenshots.map((s) =>
-                  el("span", { class: "pill" }, makeLink(s.url, s.label ?? "截图"))
-                ),
-              ])
-            : null;
+  function section(title, inner) {
+    return `<div class="sec"><h3>${escapeHtml(title)}</h3>${inner}</div>`;
+  }
 
-        const tagRow = tags.length
-          ? el("div", { class: "pill-row" }, tags.map((t) => el("span", { class: "pill", text: t })))
-          : null;
+  function ul(items) {
+    return `<ul class="list">${(items || []).map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul>`;
+  }
 
-        // <details>/<summary> is keyboard-accessible and degrades well.
-        const summary = el("summary", { class: "project-summary" }, [
-          el("div", { class: "project-summary-top" }, [
-            el("h3", { class: "card-title", text: p.name ?? "TODO：项目名称" }),
-            el("span", { class: "project-chevron", "aria-hidden": "true", text: "" }),
-          ]),
-          p.result
-            ? el("p", { class: "card-meta", text: `结果：${p.result}` })
-            : el("p", { class: "card-meta", text: "结果：TODO" }),
-          tagRow,
-        ]);
+  function shotGrid(images) {
+    const list = (images || []).filter(Boolean);
+    if (!list.length) return "";
+    return `<div class="shotGrid">${list
+      .map((src) => `<div class="shot"><img loading="lazy" alt="页面截图" src="${escapeHtml(src)}"/></div>`)
+      .join("")}</div>`;
+  }
 
-        return el("details", { class: "card project", open: null }, [
-          summary,
-          el("div", { class: "project-body" }, [
-            p.context
-              ? el("p", { class: "card-meta", text: `背景：${p.context}` })
-              : el("p", { class: "card-meta", text: "背景：TODO" }),
-            actions.length
-              ? el("ul", { class: "list" }, actions.map((a) => el("li", { text: a })))
-              : el("ul", { class: "list" }, [el("li", { text: "动作：TODO" })]),
-            links,
-            p.reflection ? el("p", { class: "card-meta", text: `复盘：${p.reflection}` }) : null,
-          ]),
-        ]);
-      })
-    );
+  function openModal(id) {
+    const p = projects.find((x) => x.id === id);
+    if (!p) return;
+    mTitle.textContent = p.title;
+    mHook.textContent = p.hook;
+
+    const d = p.detail || {};
+    const shots = d.images?.length ? section("页面截图", shotGrid(d.images)) : "";
+    mBody.innerHTML = `
+      ${section("这是什么", `<p>${escapeHtml(d.what || "—")}</p>`)}
+      ${section("亮点（小白也能懂）", ul(d.highlights || []))}
+      ${section("你会看到什么交付物", ul(d.deliverables || []))}
+      ${shots}
+    `;
+
+    modalMask.classList.add("show");
+    modalMask.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal() {
+    modalMask.classList.remove("show");
+    modalMask.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  mClose.onclick = closeModal;
+  modalMask.onclick = (e) => {
+    if (e.target === modalMask) closeModal();
   };
 
-  if (!items.length) {
-    root.replaceChildren(
-      el("div", { class: "card" }, [
-        el("p", { class: "card-title", text: "TODO：补充项目/作品" }),
-        el("p", { class: "card-meta", text: "建议包含：链接 / 截图 / 成果 / 复盘" }),
-      ])
-    );
-    return;
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
+  });
+
+  /* ==========================
+     2D list rendering
+     ========================== */
+  const FILTERS = [
+    { key: "all", label: "全部" },
+    { key: "prototype", label: "Prototype" },
+    { key: "demo", label: "Demo" },
+    { key: "pack", label: "Pack" },
+  ];
+  const state2d = { type: "all", keyword: "" };
+
+  function renderFilters() {
+    filters.innerHTML = FILTERS.map((f) => {
+      const on = f.key === state2d.type ? "on" : "";
+      return `<div class="filterChip ${on}" data-type="${f.key}">${escapeHtml(f.label)}</div>`;
+    }).join("");
+
+    [...filters.querySelectorAll(".filterChip")].forEach((chip) => {
+      chip.onclick = () => {
+        state2d.type = chip.dataset.type;
+        renderFilters();
+        renderMasonry();
+      };
+    });
   }
 
-  render();
+  function match2d(p) {
+    const kw = (state2d.keyword || "").toLowerCase().trim();
+    const typeOk = state2d.type === "all" || p.type === state2d.type;
+    if (!typeOk) return false;
+    if (!kw) return true;
+    const hay = [p.title, p.hook, ...(p.tags || []), p.type].join(" ").toLowerCase();
+    return hay.includes(kw);
+  }
+
+  function cssUrl(url) {
+    return String(url || "").replaceAll("\\", "\\\\").replaceAll("'", "\\'");
+  }
+
+  function coverStyle(c) {
+    if (c?.kind === "image" && c.src) {
+      const src = cssUrl(c.src);
+      return `background-image: url('${src}');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-color: rgba(0,0,0,.02);`;
+    }
+    if (c?.kind === "gradient") {
+      return `background:
+        radial-gradient(700px 240px at 20% 0%, rgba(255,255,255,.38), transparent 55%),
+        linear-gradient(135deg, ${c.a}, ${c.b});`;
+    }
+    return `background: linear-gradient(135deg, rgba(122,92,255,.18), rgba(34,197,94,.12));`;
+  }
+
+  function renderMasonry() {
+    const list = projects.filter(match2d);
+    count.textContent = `展示：${list.length} / ${projects.length}`;
+
+    masonry.innerHTML = list
+      .map(
+        (p) => `
+        <article class="card" data-id="${escapeHtml(p.id)}">
+          <div class="cardCover" style="${coverStyle(p.cover)}"></div>
+          <div class="cardBody">
+            <h3 class="cardTitle">${escapeHtml(p.title)}</h3>
+            <p class="cardHook">${escapeHtml(p.hook)}</p>
+            <div class="miniRow">
+              <span class="pill">${escapeHtml(p.type.toUpperCase())}</span>
+              <span class="tag">${escapeHtml(p.gallery?.chips?.[0] || "—")}</span>
+              <span class="tag">${escapeHtml(p.gallery?.chips?.[1] || "—")}</span>
+            </div>
+            <div class="tagRow">
+              ${(p.tags || [])
+                .slice(0, 4)
+                .map((t) => `<span class="tag">${escapeHtml(t)}</span>`)
+                .join("")}
+            </div>
+          </div>
+        </article>
+      `
+      )
+      .join("");
+
+    [...masonry.querySelectorAll(".card")].forEach((card) => {
+      card.onclick = () => openModal(card.dataset.id);
+    });
+  }
+
+  let searchTimer = null;
+  searchInput.addEventListener("input", () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      state2d.keyword = searchInput.value || "";
+      renderMasonry();
+    }, 120);
+  });
+
+  /* ==========================
+     3D ribbon rendering + interaction
+     ========================== */
+  let frames3d = [];
+  const galleryState = {
+    scroll: 0,
+    tscroll: 0,
+    maxScroll: 0,
+    initialized: false,
+    dragging: false,
+    pressId: null,
+    pressIndex: -1,
+    startX: 0,
+    startTscroll: 0,
+    raf: null,
+    justDragged: false,
+  };
+
+  let bound3d = false;
+
+  function typeLabel(t) {
+    if (t === "prototype") return "Prototype";
+    if (t === "demo") return "Demo";
+    return "Pack";
+  }
+
+  function artGradientStyle(p) {
+    const c = p.cover || { kind: "gradient", a: "#7a5cff", b: "#22c55e" };
+    if (c.kind === "image" && c.src) {
+      const src = cssUrl(c.src);
+      return `background-image: url('${src}');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-color: rgba(0,0,0,.02);`;
+    }
+    if (c.kind === "gradient") {
+      return `background:
+        radial-gradient(700px 240px at 18% 0%, rgba(255,255,255,.38), transparent 55%),
+        linear-gradient(135deg, ${c.a}, ${c.b});`;
+    }
+    return `background: linear-gradient(135deg, rgba(122,92,255,.18), rgba(34,197,94,.12));`;
+  }
+
+  function renderFrames3D() {
+    ribbon.innerHTML = "";
+    frames3d = [];
+
+    projects.forEach((p, i) => {
+      const frame = document.createElement("div");
+      frame.className = "frame";
+      frame.dataset.id = p.id;
+      frame.dataset.index = String(i);
+
+      frame.innerHTML = `
+        <div class="frameInner">
+          <div class="bezel">
+            <div class="art" style="${artGradientStyle(p)}"></div>
+            <div class="plaque">
+              <div class="label">${escapeHtml(p.gallery?.label || p.title)}</div>
+              <div class="chips">
+                <div class="chip type">${escapeHtml(typeLabel(p.type))}</div>
+                <div class="chip">${escapeHtml(p.gallery?.chips?.[0] || "")}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      ribbon.appendChild(frame);
+      frames3d.push(frame);
+    });
+
+    galleryState.maxScroll = Math.max(0, frames3d.length - 1);
+
+    if (!galleryState.initialized) {
+      const start = galleryState.maxScroll * 0.5;
+      galleryState.scroll = start;
+      galleryState.tscroll = start;
+      galleryState.initialized = true;
+    } else {
+      galleryState.scroll = clamp(galleryState.scroll, 0, galleryState.maxScroll);
+      galleryState.tscroll = clamp(galleryState.tscroll, 0, galleryState.maxScroll);
+    }
+
+    layoutRibbon();
+  }
+
+  function layoutRibbon() {
+    if (!frames3d.length) return;
+
+    const w = world.clientWidth || 1120;
+    const stepX = Math.round(w * 0.26);
+    const stepY = -Math.round(w * 0.016);
+    const stepZ = -Math.round(w * 0.22);
+
+    const baseRy = -18;
+    const baseRx = 4;
+
+    frames3d.forEach((frame, i) => {
+      const d = i - galleryState.scroll;
+      const abs = Math.abs(d);
+
+      const x = d * stepX;
+      const y = d * stepY;
+      const z = d * stepZ;
+      const ry = baseRy - d * 2.6;
+      const rx = baseRx;
+
+      const scale = 1 - Math.min(abs * 0.05, 0.26);
+      const opacity = clamp(1 - abs * 0.18, 0, 1);
+      const blur = Math.min(abs * 0.9, 5);
+
+      frame.style.transform = `translate(-50%,-50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) rotateX(${rx}deg) scale(${scale})`;
+      frame.style.opacity = opacity.toFixed(3);
+      frame.style.filter = blur ? `blur(${blur.toFixed(2)}px)` : "";
+      frame.style.pointerEvents = opacity < 0.08 ? "none" : "auto";
+      frame.style.zIndex = String(1000 - Math.round(d * 20));
+    });
+  }
+
+  function applyRibbon() {
+    galleryState.scroll += (galleryState.tscroll - galleryState.scroll) * 0.12;
+    galleryState.scroll = clamp(galleryState.scroll, 0, galleryState.maxScroll);
+    layoutRibbon();
+  }
+
+  function tick() {
+    if (view3d.classList.contains("show")) applyRibbon();
+    galleryState.raf = requestAnimationFrame(tick);
+  }
+
+  function clamp(v, min, max) {
+    return Math.max(min, Math.min(max, v));
+  }
+
+  function bind3DInteractions() {
+    if (bound3d) return;
+    bound3d = true;
+
+    const shouldIgnoreKey = (el) => {
+      if (!el) return false;
+      const tag = (el.tagName || "").toLowerCase();
+      return tag === "input" || tag === "textarea" || tag === "select" || el.isContentEditable;
+    };
+
+    scene.addEventListener(
+      "wheel",
+      (e) => {
+        if (!view3d.classList.contains("show")) return;
+        if (modalMask.classList.contains("show")) return;
+        e.preventDefault();
+        const delta = (e.deltaY + e.deltaX) * 0.003;
+        galleryState.tscroll = clamp(galleryState.tscroll + delta, 0, galleryState.maxScroll);
+      },
+      { passive: false }
+    );
+
+    scene.addEventListener(
+      "click",
+      (e) => {
+        if (!galleryState.justDragged) return;
+        e.preventDefault();
+        e.stopPropagation();
+        galleryState.justDragged = false;
+      },
+      true
+    );
+
+    scene.addEventListener("pointerdown", (e) => {
+      if (!view3d.classList.contains("show")) return;
+      if (modalMask.classList.contains("show")) return;
+      galleryState.dragging = true;
+      galleryState.justDragged = false;
+      const frame = e.target.closest?.(".frame");
+      galleryState.pressId = frame?.dataset?.id || null;
+      galleryState.pressIndex = frame?.dataset?.index ? Number(frame.dataset.index) : -1;
+      galleryState.startX = e.clientX;
+      galleryState.startTscroll = galleryState.tscroll;
+      scene.setPointerCapture(e.pointerId);
+    });
+
+    scene.addEventListener("pointermove", (e) => {
+      if (!galleryState.dragging) return;
+      const dx = e.clientX - galleryState.startX;
+      if (Math.abs(dx) > 6) galleryState.justDragged = true;
+      galleryState.tscroll = clamp(galleryState.startTscroll - dx * 0.004, 0, galleryState.maxScroll);
+    });
+
+    scene.addEventListener("pointerup", () => {
+      galleryState.dragging = false;
+      if (!galleryState.justDragged && galleryState.pressId) {
+        const index = Number.isFinite(galleryState.pressIndex) ? galleryState.pressIndex : -1;
+        if (index >= 0) galleryState.tscroll = clamp(index, 0, galleryState.maxScroll);
+        openModal(galleryState.pressId);
+      }
+      galleryState.pressId = null;
+      galleryState.pressIndex = -1;
+      if (galleryState.justDragged) setTimeout(() => (galleryState.justDragged = false), 0);
+    });
+
+    scene.addEventListener("pointercancel", () => {
+      galleryState.dragging = false;
+      galleryState.pressId = null;
+      galleryState.pressIndex = -1;
+      if (galleryState.justDragged) setTimeout(() => (galleryState.justDragged = false), 0);
+    });
+
+    window.addEventListener(
+      "keydown",
+      (e) => {
+        if (!view3d.classList.contains("show")) return;
+        if (shouldIgnoreKey(e.target)) return;
+
+        if (e.code === "ArrowLeft" || e.code === "ArrowUp") {
+          e.preventDefault();
+          galleryState.tscroll = clamp(Math.round(galleryState.tscroll - 1), 0, galleryState.maxScroll);
+        }
+        if (e.code === "ArrowRight" || e.code === "ArrowDown") {
+          e.preventDefault();
+          galleryState.tscroll = clamp(Math.round(galleryState.tscroll + 1), 0, galleryState.maxScroll);
+        }
+      },
+      { passive: false }
+    );
+  }
+
+  function init() {
+    applyResponsiveDefault();
+    renderFilters();
+    renderMasonry();
+
+    if (!isMobile()) {
+      renderFrames3D();
+      if (!galleryState.raf) tick();
+      bind3DInteractions();
+    }
+  }
+
+  window.addEventListener("resize", () => {
+    applyResponsiveDefault();
+
+    if (!isMobile()) {
+      if (!world.querySelector(".frame")) {
+        renderFrames3D();
+        if (!galleryState.raf) tick();
+        bind3DInteractions();
+      }
+    }
+  });
+
+  init();
+}
+
+function renderProjects(_data) {
+  initPortfolioProjectsModule();
 }
 
 function renderSkills(data) {

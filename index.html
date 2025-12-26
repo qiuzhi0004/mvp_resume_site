@@ -44,13 +44,78 @@
         <div class="stack" id="experienceList"></div>
       </section>
 
-      <section id="projects" class="section" aria-labelledby="projectsTitle">
-        <div class="section-head">
-          <h2 id="projectsTitle">项目</h2>
-          <p class="section-desc"></p>
+      <section id="projects" class="section" aria-label="项目">
+        <div class="portfolioModule" id="portfolio">
+          <div class="moduleHeader">
+            <div class="moduleTitle">
+              <div class="kicker">Portfolio · Prototype / Demo / Pack（12件展品）</div>
+              <div class="title">vibe coding 的产品原型展示墙</div>
+              <div class="sub">同一份数据同时驱动：3D 缩略图（短铭牌） + 2D 列表（完整信息）。</div>
+              <div class="mobileNote">手机端默认列表模式（更顺手）。</div>
+            </div>
+
+            <div class="actions">
+              <button class="btn btnPrimary" id="btnToList" type="button">列表模式</button>
+              <button class="btn btnGhost" id="btnToGallery" type="button" style="display: none;">画廊模式</button>
+            </div>
+          </div>
+
+          <!-- 3D view -->
+          <div id="view3d" class="show">
+            <div class="galleryWrap">
+              <div class="ceilingGlow"></div>
+
+              <div class="hud" aria-hidden="true">
+                <div class="hudPill">滚轮/触控板：滑动浏览</div>
+                <div class="hudPill">拖拽：滑动浏览</div>
+                <div class="hudPill">点击缩略图：查看详情</div>
+              </div>
+
+              <div class="scene" id="scene">
+                <div class="camera" id="camera">
+                  <div class="world" id="world">
+                    <div class="ribbon" id="ribbon" aria-label="Projects ribbon"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2D view -->
+          <div id="view2d">
+            <div class="listWrap">
+              <div class="toolbar">
+                <div class="searchBox">
+                  <div class="searchIcon">⌕</div>
+                  <input
+                    id="searchInput"
+                    class="searchInput"
+                    placeholder="搜索作品：原型 / demo / 模板 / 分享 / 动效 …"
+                  />
+                </div>
+
+                <div class="filterRow" id="filters"></div>
+                <div class="count" id="count"></div>
+              </div>
+
+              <div class="masonry" id="masonry"></div>
+            </div>
+          </div>
         </div>
-        <div id="projectsControls"></div>
-        <div class="grid" id="projectsGrid"></div>
+
+        <!-- Modal (for portfolio module) -->
+        <div class="modalMask" id="modalMask" aria-hidden="true">
+          <div class="modal" role="dialog" aria-modal="true" aria-label="作品详情">
+            <div class="modalHeader">
+              <div>
+                <h2 id="mTitle">标题</h2>
+                <div class="mini" id="mHook">一句话</div>
+              </div>
+              <button class="closeBtn" id="mClose" title="关闭" type="button">✕</button>
+            </div>
+            <div class="modalBody" id="mBody"></div>
+          </div>
+        </div>
       </section>
 
       <section id="skills" class="section" aria-labelledby="skillsTitle">
