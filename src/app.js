@@ -1241,6 +1241,7 @@ function initBootcampPile(board, items) {
 
   const rand = (min, max) => min + Math.random() * (max - min);
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+  const nowMs = () => (typeof performance !== "undefined" && performance.now ? performance.now() : Date.now());
 
   const getBounds = (item) => {
     const margin = 22;
@@ -1265,8 +1266,66 @@ function initBootcampPile(board, items) {
     return s;
   };
 
+  const stopInertia = (item) => {
+    const s = ensureState(item);
+    if (s.inertia?.raf) cancelAnimationFrame(s.inertia.raf);
+    s.inertia = null;
+    item.removeAttribute("data-inertia");
+  };
+
+  const startInertia = (item, vx, vy) => {
+    stopInertia(item);
+    if (!Number.isFinite(vx) || !Number.isFinite(vy)) return;
+
+    const s = ensureState(item);
+    const MAX_V = 2.2; // px/ms (~2200px/s)
+    let velX = clamp(vx, -MAX_V, MAX_V);
+    let velY = clamp(vy, -MAX_V, MAX_V);
+
+    const SPEED_EPS = 0.018; // px/ms
+    const BASE_FRICTION = 0.92; // per 16.67ms
+    let lastT = nowMs();
+
+    item.dataset.inertia = "true";
+
+    const step = () => {
+      const t = nowMs();
+      const dt = Math.min(48, Math.max(0, t - lastT));
+      lastT = t;
+
+      const friction = Math.pow(BASE_FRICTION, dt / 16.67);
+      velX *= friction;
+      velY *= friction;
+
+      const b = getBounds(item);
+      const nextX = s.x + velX * dt;
+      const nextY = s.y + velY * dt;
+
+      const clampedX = clamp(nextX, -b.maxX, b.maxX);
+      const clampedY = clamp(nextY, -b.maxY, b.maxY);
+
+      // Hit the wall → stop that axis.
+      if (clampedX !== nextX) velX = 0;
+      if (clampedY !== nextY) velY = 0;
+
+      s.x = clampedX;
+      s.y = clampedY;
+      applyTransform(item, s);
+
+      if (Math.abs(velX) + Math.abs(velY) < SPEED_EPS) {
+        stopInertia(item);
+        return;
+      }
+
+      s.inertia = { raf: requestAnimationFrame(step) };
+    };
+
+    s.inertia = { raf: requestAnimationFrame(step) };
+  };
+
   const scatter = () => {
     items.forEach((item) => {
+      stopInertia(item);
       const b = getBounds(item);
       const s = ensureState(item);
       s.x = rand(-b.maxX, b.maxX);
@@ -1283,6 +1342,7 @@ function initBootcampPile(board, items) {
 
   const deactivate = () => {
     if (!active) return;
+    stopInertia(active);
     const prev = active.dataset.prev ? JSON.parse(active.dataset.prev) : null;
     const s = ensureState(active);
     if (prev) {
@@ -1304,6 +1364,7 @@ function initBootcampPile(board, items) {
       return;
     }
     deactivate();
+    stopInertia(item);
 
     const s = ensureState(item);
     item.dataset.prev = JSON.stringify({ x: s.x, y: s.y, r: s.r, s: s.s });
@@ -1346,6 +1407,7 @@ function initBootcampPile(board, items) {
       if (!e.isPrimary) return;
       if (e.pointerType === "mouse" && e.button !== 0) return;
       e.preventDefault();
+      stopInertia(item);
       item.setPointerCapture(e.pointerId);
       item.style.zIndex = String(++z);
       item.dataset.dragging = "true";
@@ -1356,6 +1418,11 @@ function initBootcampPile(board, items) {
         baseX: s.x,
         baseY: s.y,
         moved: false,
+        lastX: e.clientX,
+        lastY: e.clientY,
+        lastT: nowMs(),
+        vx: 0,
+        vy: 0,
       };
     });
 
@@ -1366,7 +1433,22 @@ function initBootcampPile(board, items) {
 
       const dx = e.clientX - s.drag.startX;
       const dy = e.clientY - s.drag.startY;
-      if (!s.drag.moved && Math.hypot(dx, dy) > 3) s.drag.moved = true;
+      const threshold = e.pointerType === "mouse" ? 2 : 8;
+      if (!s.drag.moved && Math.hypot(dx, dy) > threshold) s.drag.moved = true;
+
+      const t = nowMs();
+      const dt = t - (s.drag.lastT || t);
+      if (dt > 0) {
+        const instVx = (e.clientX - s.drag.lastX) / dt;
+        const instVy = (e.clientY - s.drag.lastY) / dt;
+        const alpha = 0.35;
+        s.drag.vx = (1 - alpha) * (s.drag.vx || 0) + alpha * instVx;
+        s.drag.vy = (1 - alpha) * (s.drag.vy || 0) + alpha * instVy;
+      }
+      s.drag.lastX = e.clientX;
+      s.drag.lastY = e.clientY;
+      s.drag.lastT = t;
+
       if (item.dataset.active === "true") return;
 
       const b = getBounds(item);
@@ -1380,9 +1462,12 @@ function initBootcampPile(board, items) {
       if (!s.drag || s.drag.id !== e.pointerId) return;
       e.preventDefault();
       const moved = s.drag.moved;
+      const vx = s.drag.vx || 0;
+      const vy = s.drag.vy || 0;
       s.drag = null;
       item.removeAttribute("data-dragging");
       if (!moved) activate(item);
+      else if (item.dataset.active !== "true") startInertia(item, vx, vy);
     };
 
     item.addEventListener("pointerup", endDrag);
@@ -1405,6 +1490,37 @@ function initBootcampPile(board, items) {
   window.addEventListener("resize", () => {
     window.clearTimeout(normalizeAll._t);
     normalizeAll._t = window.setTimeout(normalizeAll, 120);
+  });
+}
+
+function initPhotoSwitch() {
+  const container = document.getElementById("photoSwitchContainer");
+  if (!container) return;
+  if (container.dataset.init === "true") return;
+  container.dataset.init = "true";
+
+  const slides = [...container.querySelectorAll(".photo-switch-slide")];
+  if (!slides.length) return;
+
+  const setActive = (target) => {
+    slides.forEach((slide) => {
+      const on = slide === target;
+      slide.classList.toggle("active", on);
+      slide.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  };
+
+  const initial = slides.find((s) => s.classList.contains("active")) ?? slides[0];
+  setActive(initial);
+
+  slides.forEach((slide) => {
+    slide.addEventListener("click", () => setActive(slide));
+    slide.addEventListener("keydown", (e) => {
+      if (e.code === "Enter" || e.code === "Space") {
+        e.preventDefault();
+        setActive(slide);
+      }
+    });
   });
 }
 
@@ -1643,6 +1759,7 @@ async function main() {
   renderDownload(data);
   renderMeta(data);
   initActiveNav();
+  initPhotoSwitch();
   applyDownloadLinks(data.download?.pdfPath ?? null);
   initReveal();
 }

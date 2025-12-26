@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="个人简历网站（MVP）" />
     <title>简历</title>
-    <link rel="stylesheet" href="./styles.css?v=20251226-bootcamp2" />
+    <link rel="stylesheet" href="./styles.css?v=20251226-effects2" />
   </head>
   <body>
     <a class="skip-link" href="#main">跳到正文</a>
@@ -42,6 +42,20 @@
           <div class="heroMedia" aria-hidden="true">
             <div class="heroPortrait">
               <img src="./assets/professional-photo.png" alt="个人照片" loading="eager" decoding="async" />
+              <svg class="heroOrbit" viewBox="0 0 200 200" aria-hidden="true">
+                <defs>
+                  <path
+                    id="heroOrbitPath"
+                    d="M100,100 m-82,0 a82,82 0 1,1 164,0 a82,82 0 1,1 -164,0"
+                  />
+                </defs>
+                <text class="heroOrbitText">
+                  <textPath href="#heroOrbitPath" xlink:href="#heroOrbitPath" startOffset="0%">
+                    SHIP FAST · LEARN FASTER · BUILD → MEASURE → ITERATE · 把简历当产品 · MAKE IT FUN ·
+                    SHIP FAST · LEARN FASTER · BUILD → MEASURE → ITERATE · 把简历当产品 · MAKE IT FUN ·
+                  </textPath>
+                </text>
+              </svg>
             </div>
           </div>
         </div>
@@ -167,6 +181,58 @@
         <div id="downloadCard"></div>
       </section>
 
+      <section id="photoSwitch" class="section" aria-label="点击切换图片画廊">
+        <div class="photo-switch-stage">
+          <div class="photo-switch-container" id="photoSwitchContainer">
+            <div
+              class="photo-switch-slide active"
+              style="background-image: url('./other-photos/1.png')"
+              role="button"
+              tabindex="0"
+              aria-label="图片 1：点击切换"
+            >
+              <h3>Bootcamp · Day 01</h3>
+            </div>
+            <div
+              class="photo-switch-slide"
+              style="background-image: url('./other-photos/2.png')"
+              role="button"
+              tabindex="0"
+              aria-label="图片 2：点击切换"
+            >
+              <h3>Build · Measure · Learn</h3>
+            </div>
+            <div
+              class="photo-switch-slide"
+              style="background-image: url('./other-photos/3.png')"
+              role="button"
+              tabindex="0"
+              aria-label="图片 3：点击切换"
+            >
+              <h3>Ship Something Today</h3>
+            </div>
+            <div
+              class="photo-switch-slide"
+              style="background-image: url('./other-photos/4.png')"
+              role="button"
+              tabindex="0"
+              aria-label="图片 4：点击切换"
+            >
+              <h3>Feedback Loop</h3>
+            </div>
+            <div
+              class="photo-switch-slide"
+              style="background-image: url('./other-photos/5.png')"
+              role="button"
+              tabindex="0"
+              aria-label="图片 5：点击切换"
+            >
+              <h3>Keep Going</h3>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <footer class="site-footer">
         <span id="footerMeta"></span>
       </footer>
@@ -180,6 +246,6 @@
       </div>
     </noscript>
 
-    <script src="./src/app.js?v=20251226-bootcamp2" defer></script>
+    <script src="./src/app.js?v=20251226-effects2" defer></script>
   </body>
 </html>
