@@ -714,6 +714,30 @@ html.js .reveal.is-visible {
   gap: 4px;
 }
 
+#experience .cd-timeline__content[data-has-details="true"] {
+  cursor: pointer;
+}
+
+#experience .cd-timeline__content[data-has-details="true"]:focus-visible {
+  box-shadow: var(--focus);
+  border-color: rgba(122, 92, 255, 0.28);
+}
+
+#experience .cd-timeline__expander {
+  margin-top: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: -0.01em;
+}
+
+#experience .cd-timeline__expander-icon {
+  display: inline-block;
+  transform: translateY(-1px);
+}
+
 @media (min-width: 900px) {
   #experience .cd-timeline__container::before {
     left: 50%;

@@ -52,6 +52,67 @@ function toast(message) {
   }, 1600);
 }
 
+let sharedModalController = null;
+
+function getSharedModal() {
+  if (sharedModalController) return sharedModalController;
+
+  const modalMask = document.getElementById("modalMask");
+  const mTitle = document.getElementById("mTitle");
+  const mHook = document.getElementById("mHook");
+  const mBody = document.getElementById("mBody");
+  const mClose = document.getElementById("mClose");
+
+  if (!modalMask || !mTitle || !mHook || !mBody || !mClose) return null;
+
+  let lastFocus = null;
+
+  const close = () => {
+    if (!modalMask.classList.contains("show")) return;
+    modalMask.classList.remove("show");
+    modalMask.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+
+    const toFocus = lastFocus;
+    lastFocus = null;
+    if (toFocus && typeof toFocus.focus === "function" && document.contains(toFocus)) {
+      toFocus.focus();
+    }
+  };
+
+  const open = ({ title = "", hook = "", body = "" } = {}) => {
+    lastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    mTitle.textContent = String(title ?? "");
+    mHook.textContent = String(hook ?? "");
+
+    if (typeof body === "string") {
+      mBody.innerHTML = body;
+    } else {
+      const nodes = Array.isArray(body) ? body : [body];
+      mBody.replaceChildren(...nodes.filter(Boolean));
+    }
+
+    modalMask.classList.add("show");
+    modalMask.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    mClose.focus();
+  };
+
+  const isOpen = () => modalMask.classList.contains("show");
+
+  mClose.addEventListener("click", close);
+  modalMask.addEventListener("click", (e) => {
+    if (e.target === modalMask) close();
+  });
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") close();
+  });
+
+  sharedModalController = { open, close, isOpen };
+  return sharedModalController;
+}
+
 function makeLink(href, text) {
   return el("a", { href, target: "_blank", rel: "noreferrer", text: text ?? href });
 }
@@ -248,6 +309,7 @@ function initExperienceTimeline(timelineRoot) {
 function renderExperience(data) {
   const items = Array.isArray(data.experience) ? data.experience : [];
   const root = document.getElementById("experienceList");
+  const modal = getSharedModal();
 
   if (!items.length) {
     root.classList.add("stack");
@@ -278,27 +340,78 @@ function renderExperience(data) {
     const metaText = [it.location, !it.location ? it.role : null].filter(Boolean).join("｜");
     const summary = Array.isArray(it.summary) ? it.summary : [];
     const achievements = Array.isArray(it.achievements) ? it.achievements : [];
+    const detailParagraphs = (
+      Array.isArray(it.details) ? it.details : typeof it.details === "string" ? [it.details] : []
+    )
+      .map((p) => String(p ?? "").trim())
+      .filter(Boolean);
     const orgKey = String(it.org ?? "").trim();
     const mark = orgKey ? orgKey.slice(0, 1).toUpperCase() : "•";
+    const hasDetails = !!modal && detailParagraphs.length > 0;
+
+    const openDetails = () => {
+      if (!hasDetails) return;
+      const hookParts = [metaText, dateText].filter(Boolean);
+      modal.open({
+        title: titleText,
+        hook: hookParts.join(" · "),
+        body: el("div", { class: "sec" }, [
+          el("h3", { text: "详细描述" }),
+          ...detailParagraphs.map((p) => el("p", { text: p })),
+        ]),
+      });
+    };
+
+    const onDetailsKeydown = (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openDetails();
+      }
+    };
+
+    const summaryBody = [
+      el("div", { class: "cd-timeline__content-header" }, [
+        el("h3", { class: "card-title", text: titleText }),
+        dateText ? el("span", { class: "cd-timeline__date", text: dateText }) : null,
+      ]),
+      metaText ? el("p", { class: "card-meta", text: metaText }) : null,
+      summary.length ? el("ul", { class: "list" }, summary.map((s) => el("li", { text: s }))) : null,
+      achievements.length
+        ? el("div", { class: "cd-timeline__section" }, [
+            el("p", { class: "card-meta", text: "关键成果" }),
+            el("ul", { class: "list" }, achievements.map((a) => el("li", { text: a }))),
+          ])
+        : null,
+      hasDetails
+        ? el("div", { class: "cd-timeline__expander", "aria-hidden": "true" }, [
+            el("span", { text: "点击查看详细描述" }),
+            el("span", { class: "cd-timeline__expander-icon", "aria-hidden": "true", text: "⌄" }),
+          ])
+        : null,
+    ];
+
+    const content = el(
+      "article",
+      {
+        class: "cd-timeline__content",
+        ...(hasDetails
+          ? {
+              role: "button",
+              tabindex: "0",
+              dataset: { hasDetails: "true" },
+              onclick: openDetails,
+              onkeydown: onDetailsKeydown,
+            }
+          : {}),
+      },
+      summaryBody
+    );
 
     return el("div", { class: "cd-timeline__block", dataset: { index } }, [
       el("div", { class: "cd-timeline__img", "aria-hidden": "true", style: `--tl-accent:${accent};--tl-accent2:${accent2};` }, [
         el("span", { class: "cd-timeline__mark", text: mark }),
       ]),
-      el("article", { class: "cd-timeline__content" }, [
-        el("div", { class: "cd-timeline__content-header" }, [
-          el("h3", { class: "card-title", text: titleText }),
-          dateText ? el("span", { class: "cd-timeline__date", text: dateText }) : null,
-        ]),
-        metaText ? el("p", { class: "card-meta", text: metaText }) : null,
-        summary.length ? el("ul", { class: "list" }, summary.map((s) => el("li", { text: s }))) : null,
-        achievements.length
-          ? el("div", { class: "cd-timeline__section" }, [
-              el("p", { class: "card-meta", text: "关键成果" }),
-              el("ul", { class: "list" }, achievements.map((a) => el("li", { text: a }))),
-            ])
-          : null,
-      ]),
+      content,
       dateText ? el("div", { class: "cd-timeline__opposite", text: dateText }) : null,
     ]);
   });
@@ -321,16 +434,11 @@ function initPortfolioProjectsModule() {
   const world = document.getElementById("world");
   const ribbon = document.getElementById("ribbon");
 
-  const modalMask = document.getElementById("modalMask");
-  const mTitle = document.getElementById("mTitle");
-  const mHook = document.getElementById("mHook");
-  const mBody = document.getElementById("mBody");
-  const mClose = document.getElementById("mClose");
-
   const filters = document.getElementById("filters");
   const masonry = document.getElementById("masonry");
   const count = document.getElementById("count");
   const searchInput = document.getElementById("searchInput");
+  const modal = getSharedModal();
 
   if (
     !moduleRoot ||
@@ -341,15 +449,11 @@ function initPortfolioProjectsModule() {
     !scene ||
     !world ||
     !ribbon ||
-    !modalMask ||
-    !mTitle ||
-    !mHook ||
-    !mBody ||
-    !mClose ||
     !filters ||
     !masonry ||
     !count ||
-    !searchInput
+    !searchInput ||
+    !modal
   ) {
     return;
   }
@@ -603,37 +707,20 @@ function initPortfolioProjectsModule() {
   function openModal(id) {
     const p = projects.find((x) => x.id === id);
     if (!p) return;
-    mTitle.textContent = p.title;
-    mHook.textContent = p.hook;
 
     const d = p.detail || {};
     const shots = d.images?.length ? section("页面截图", shotGrid(d.images)) : "";
-    mBody.innerHTML = `
+    modal.open({
+      title: p.title,
+      hook: p.hook,
+      body: `
       ${section("这是什么", `<p>${escapeHtml(d.what || "—")}</p>`)}
       ${section("亮点（小白也能懂）", ul(d.highlights || []))}
       ${section("你会看到什么交付物", ul(d.deliverables || []))}
       ${shots}
-    `;
-
-    modalMask.classList.add("show");
-    modalMask.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
+    `,
+    });
   }
-
-  function closeModal() {
-    modalMask.classList.remove("show");
-    modalMask.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
-  }
-
-  mClose.onclick = closeModal;
-  modalMask.onclick = (e) => {
-    if (e.target === modalMask) closeModal();
-  };
-
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeModal();
-  });
 
   /* ==========================
      2D list rendering
@@ -884,7 +971,7 @@ function initPortfolioProjectsModule() {
       "wheel",
       (e) => {
         if (!view3d.classList.contains("show")) return;
-        if (modalMask.classList.contains("show")) return;
+        if (modal.isOpen()) return;
         e.preventDefault();
         const delta = (e.deltaY + e.deltaX) * 0.003;
         galleryState.tscroll = clamp(galleryState.tscroll + delta, 0, galleryState.maxScroll);
@@ -905,7 +992,7 @@ function initPortfolioProjectsModule() {
 
     scene.addEventListener("pointerdown", (e) => {
       if (!view3d.classList.contains("show")) return;
-      if (modalMask.classList.contains("show")) return;
+      if (modal.isOpen()) return;
       galleryState.dragging = true;
       galleryState.justDragged = false;
       const frame = e.target.closest?.(".frame");
