@@ -1082,32 +1082,13 @@ function renderProjects(_data) {
 function renderSkills(data) {
   const groups = Array.isArray(data.skills) ? data.skills : [];
   const root = document.getElementById("skillsGrid");
-  root.classList.remove("grid", "cols-2");
-  root.classList.add("skills-accordion");
+  if (!root) return;
 
-  if (!groups.length) {
-    root.replaceChildren(
-      el("div", { class: "card" }, [
-        el("p", { class: "card-title", text: "TODO：补充技能分组" }),
-        el("p", { class: "card-meta", text: "例如：产品能力 / 数据与增长 / 工具与技术 / 沟通与影响力" }),
-      ])
-    );
-    return;
-  }
+  root.classList.remove("grid", "cols-2", "skills-accordion");
+  root.classList.add("skills-goo-grid");
 
-  const ACCENTS = [
-    "rgba(122, 92, 255, 0.30)", // purple
-    "rgba(34, 197, 94, 0.22)", // green
-    "rgba(96, 165, 250, 0.20)", // blue
-    "rgba(245, 158, 11, 0.20)", // amber
-    "rgba(167, 139, 250, 0.22)", // lavender
-    "rgba(122, 92, 255, 0.18)", // soft purple
-  ];
-
-  const panels = groups.map((g, index) => {
-    const groupName = g.group ?? "TODO：分组名";
-    const items = Array.isArray(g.items) ? g.items : [];
-    const tokens = items
+  const tokenize = (items) =>
+    (Array.isArray(items) ? items : [])
       .flatMap((it) =>
         String(it ?? "")
           .split(/[、，,]/g)
@@ -1115,80 +1096,142 @@ function renderSkills(data) {
           .filter(Boolean)
       )
       .filter(Boolean);
-    const listItems = tokens.length ? tokens : items;
-    const list = listItems.length
-      ? el(
-          "ul",
-          { class: "list skill-list" },
-          listItems.map((it) => el("li", { text: it }))
-        )
-      : el("p", { class: "card-meta", text: "TODO：补充条目" });
 
-    return el(
-      "article",
-      {
-        class: "skill-panel",
-        tabindex: "0",
-        role: "button",
-        "aria-expanded": "false",
-        "aria-label": `${groupName}（技能组）`,
-        style: `--skill-accent: ${ACCENTS[index % ACCENTS.length]};`,
-        dataset: { index },
-      },
-      [
-        el("div", { class: "skill-rail" }, [el("span", { class: "skill-rail-title", text: groupName })]),
-        el("div", { class: "skill-content" }, [
-          el("div", { class: "skill-head" }, [
-            el("h3", { class: "skill-title", text: groupName }),
-            el("p", { class: "skill-sub", text: listItems.length ? `${listItems.length} 条` : "" }),
-          ]),
-          el("div", { class: "skill-body" }, [list]),
-        ]),
-      ]
-    );
-  });
+  const getGroupTokens = (names) => {
+    const nameSet = new Set((Array.isArray(names) ? names : [names]).map((n) => String(n ?? "").trim()));
+    const found = groups.find((g) => nameSet.has(String(g?.group ?? "").trim()));
+    const tokens = tokenize(found?.items ?? []);
+    return tokens.length ? tokens : [];
+  };
 
-  root.replaceChildren(...panels);
+  const menus = [
+    { key: "growth", label: "增长", accent: "var(--c-pink)", items: getGroupTokens(["增长"]) },
+    { key: "product", label: "产品", accent: "var(--c-cyan)", items: getGroupTokens(["产品"]) },
+    { key: "data", label: "数据", accent: "var(--c-purple)", items: getGroupTokens(["数据"]) },
+    { key: "tooling", label: "工具链", accent: "var(--c-lime)", items: getGroupTokens(["前沿工具链", "工具链", "工具链路", "工具"]) },
+  ];
 
-  const panelEls = [...root.querySelectorAll(".skill-panel")];
-  if (!panelEls.length) return;
-
-  const canHover = window.matchMedia?.("(hover:hover)").matches ?? false;
-  const defaultIndex = 0;
-
-  const setActive = (nextIndex) => {
-    const idx = Math.max(0, Math.min(panelEls.length - 1, Number(nextIndex) || 0));
-    panelEls.forEach((panel, i) => {
-      const on = i === idx;
-      panel.dataset.active = on ? "true" : "false";
-      panel.setAttribute("aria-expanded", on ? "true" : "false");
+  const toPositions = (n) => {
+    const r = 78;
+    if (!n) return [];
+    if (n === 1) return [{ x: 0, y: -r }];
+    const start = -Math.PI / 2;
+    const step = (Math.PI * 2) / n;
+    return Array.from({ length: n }, (_, i) => {
+      const a = start + step * i;
+      return { x: Math.round(Math.cos(a) * r * 100) / 100, y: Math.round(Math.sin(a) * r * 100) / 100 };
     });
   };
 
-  setActive(defaultIndex);
+  const buildMenu = (menu) => {
+    const id = `skillsGoo_${menu.key}`;
+    const items = (menu.items?.length ? menu.items : ["TODO"]) .slice(0, 8);
+    const positions = toPositions(items.length);
 
-  panelEls.forEach((panel, i) => {
-    if (canHover) {
-      panel.addEventListener("pointerenter", () => setActive(i));
+    const input = el("input", { class: "skills-goo-open", type: "checkbox", id });
+    const label = el(
+      "label",
+      {
+        class: "skills-goo-open-button",
+        for: id,
+        tabindex: "0",
+        role: "button",
+      "aria-expanded": "false",
+      "aria-label": `${menu.label}（点击展开技能点）`,
+      },
+      [
+        el("span", { class: "skills-goo-title", text: menu.label }),
+      ]
+    );
+
+    const bubbles = items.map((text, i) => {
+      const p = positions[i] ?? { x: 0, y: -108 };
+      const dur = 180 + i * 100;
+      return el("button", {
+        class: "skills-goo-item",
+        type: "button",
+        text,
+        style: `--tx:${p.x}px;--ty:${p.y}px;--dur:${dur}ms;`,
+        "aria-label": text,
+        tabindex: "-1",
+      });
+    });
+
+    return el(
+      "nav",
+      {
+        class: "skills-goo-menu",
+        style: `--skills-accent:${menu.accent};`,
+        "aria-label": `${menu.label}技能`,
+        dataset: { key: menu.key },
+      },
+      [input, label, ...bubbles]
+    );
+  };
+
+  root.replaceChildren(
+    el("div", { class: "skills-goo-card" }, [
+      el("div", { class: "skills-goo-layout" }, menus.map(buildMenu)),
+    ])
+  );
+
+  initSkillsGoo(root);
+}
+
+function initSkillsGoo(root) {
+  if (!root) return;
+  if (root.dataset.skillsGooInit === "true") return;
+  root.dataset.skillsGooInit = "true";
+
+  const toggles = () => [...root.querySelectorAll(".skills-goo-open")];
+
+  const sync = (toggle) => {
+    const menu = toggle.closest(".skills-goo-menu");
+    const label = menu?.querySelector(".skills-goo-open-button");
+    const open = !!toggle.checked;
+    menu?.setAttribute("data-open", open ? "true" : "false");
+    label?.setAttribute("aria-expanded", open ? "true" : "false");
+
+    const items = menu ? [...menu.querySelectorAll(".skills-goo-item")] : [];
+    for (const it of items) it.tabIndex = open ? 0 : -1;
+  };
+
+  for (const t of toggles()) sync(t);
+
+  for (const t of toggles()) {
+    t.addEventListener("change", () => {
+      sync(t);
+    });
+  }
+
+  for (const label of root.querySelectorAll(".skills-goo-open-button")) {
+    label.addEventListener("keydown", (e) => {
+      if (e.code !== "Enter" && e.code !== "Space") return;
+      e.preventDefault();
+      const id = label.getAttribute("for");
+      const input = id ? document.getElementById(id) : null;
+      if (!(input instanceof HTMLInputElement)) return;
+      input.checked = !input.checked;
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
+
+  root.addEventListener("pointerdown", (e) => {
+    if (!(e.target instanceof HTMLElement)) return;
+    if (e.target.closest(".skills-goo-menu")) return;
+    for (const t of toggles()) {
+      t.checked = false;
+      sync(t);
     }
-
-    panel.addEventListener("focusin", () => setActive(i));
-
-    panel.addEventListener("click", () => {
-      if (!canHover) setActive(i);
-    });
-
-    panel.addEventListener("keydown", (e) => {
-      if (e.code === "Enter" || e.code === "Space") {
-        e.preventDefault();
-        setActive(i);
-      }
-    });
   });
 
-  if (canHover) {
-    root.addEventListener("pointerleave", () => setActive(defaultIndex));
-  }
+  window.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    for (const t of toggles()) {
+      t.checked = false;
+      sync(t);
+    }
+  });
 }
 
 function renderBootcamp(_data) {

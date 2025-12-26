@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="个人简历网站（MVP）" />
     <title>简历</title>
-    <link rel="stylesheet" href="./styles.css?v=20251226-effects2" />
-  </head>
+	    <link rel="stylesheet" href="./styles.css?v=20251226-overlapfix1" />
+	  </head>
   <body>
     <a class="skip-link" href="#main">跳到正文</a>
 
@@ -238,6 +238,21 @@
       </footer>
     </main>
 
+    <svg class="skillsGooDefs" xmlns="http://www.w3.org/2000/svg" version="1.1" aria-hidden="true">
+      <defs>
+        <filter id="skills-goo">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+          <feColorMatrix
+            in="blur"
+            mode="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+            result="goo"
+          />
+          <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+        </filter>
+      </defs>
+    </svg>
+
     <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
     <noscript>
@@ -246,6 +261,6 @@
       </div>
     </noscript>
 
-    <script src="./src/app.js?v=20251226-effects2" defer></script>
+    <script src="./src/app.js?v=20251226-skillsgoo6" defer></script>
   </body>
 </html>

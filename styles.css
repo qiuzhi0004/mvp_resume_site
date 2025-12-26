@@ -945,171 +945,159 @@ html.js .reveal.is-visible {
   }
 }
 
-/* Skills: horizontal accordion (Minimalist Portfolio Accordion-like) */
-.skills-accordion {
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-3);
+/* Skills: gooey radial bubbles (tarick/mJxZad-inspired) */
+#skills .skills-goo-grid {
   margin-top: var(--space-3);
-  height: 360px;
 }
 
-.skill-panel {
-  position: relative;
-  flex: 1 1 0;
-  min-width: 72px;
-  padding: var(--space-4);
+#skills .skills-goo-card {
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.56));
   box-shadow: var(--shadow-sm);
-  overflow: clip;
-  cursor: pointer;
-  outline: none;
-  transition: flex 260ms ease, transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease,
-    background 160ms ease;
+  padding: var(--space-3);
+  overflow: hidden;
+  position: relative;
 }
 
-.skill-panel::before {
+#skills .skills-goo-card::before {
   content: "";
   position: absolute;
-  inset: -1px;
-  border-radius: inherit;
+  inset: -2px;
   pointer-events: none;
-  opacity: 0;
+  opacity: 0.8;
   background:
-    radial-gradient(560px 280px at 30% 20%, var(--skill-accent), transparent 62%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.5));
-  transition: opacity 200ms ease;
+    radial-gradient(560px 320px at 22% 12%, rgba(122, 92, 255, 0.16), transparent 62%),
+    radial-gradient(520px 360px at 82% 18%, rgba(34, 197, 94, 0.12), transparent 64%),
+    radial-gradient(520px 420px at 60% 92%, rgba(245, 158, 11, 0.1), transparent 62%);
+  filter: blur(16px);
 }
 
-.skill-panel[data-active="true"] {
-  flex: 4 1 0;
-  border-color: var(--border-strong);
-  background: rgba(255, 255, 255, 0.86);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
-}
-
-.skill-panel[data-active="true"]::before {
-  opacity: 1;
-}
-
-.skill-panel:focus-visible {
-  box-shadow: var(--focus);
-  border-color: rgba(122, 92, 255, 0.30);
-}
-
-.skill-rail {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  pointer-events: none;
-  opacity: 0.92;
-  transition: opacity 200ms ease;
-}
-
-.skill-rail-title {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-}
-
-.skill-panel[data-active="true"] .skill-rail {
-  opacity: 0;
-}
-
-.skill-content {
+#skills .skills-goo-layout {
   position: relative;
   z-index: 1;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 200ms ease, transform 200ms ease;
-}
-
-.skill-panel[data-active="true"] .skill-content {
-  opacity: 1;
-  transform: none;
-}
-
-.skill-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
-
-.skill-title {
-  margin: 0;
-  font-weight: 800;
-  font-size: 18px;
-  letter-spacing: -0.01em;
-}
-
-.skill-sub {
-  margin: 0;
-  font-size: 13px;
-  color: var(--muted-2);
-  white-space: nowrap;
-}
-
-.skill-body {
   margin-top: var(--space-2);
-  overflow: auto;
-  padding-right: 6px;
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
-.skill-list {
-  margin-top: 0;
+#skills .skills-goo-menu {
+  --goo-size: 76px;
+  position: relative;
+  flex: 0 0 240px;
+  width: 240px;
+  height: 240px;
+  margin: 0;
+  filter: url("#skills-goo");
+  scroll-snap-align: start;
 }
 
-@media (max-width: 820px) {
-  .skills-accordion {
-    height: auto;
-    flex-direction: column;
-  }
+#skills .skills-goo-open {
+  display: none;
+}
 
-  .skill-panel {
-    flex: none;
-    min-width: 0;
-    min-height: 96px;
-  }
+#skills .skills-goo-open-button,
+#skills .skills-goo-item {
+  width: var(--goo-size);
+  height: var(--goo-size);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: calc(var(--goo-size) / -2);
+  margin-top: calc(var(--goo-size) / -2);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--skills-accent, var(--accent));
+  color: rgba(255, 255, 255, 0.96);
+  border: none;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
+  transform: translate3d(0, 0, 0);
+}
 
-  .skill-panel[data-active="true"] {
-    transform: none;
-  }
+#skills .skills-goo-open-button {
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  transition: transform ease-out 200ms;
+  z-index: 3;
+}
 
-  .skill-rail {
-    display: none;
-  }
+#skills .skills-goo-open-button:hover {
+  transform: scale(1.08) translateZ(0);
+}
 
-  .skill-content {
-    opacity: 1;
-    transform: none;
-  }
+#skills .skills-goo-open-button:focus-visible {
+  box-shadow: var(--focus), 0 18px 42px rgba(0, 0, 0, 0.18);
+}
 
-  .skill-body {
-    display: none;
-  }
+#skills .skills-goo-title {
+  position: relative;
+  z-index: 1;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  font-size: 14px;
+  text-transform: uppercase;
+  transition: opacity 160ms ease, transform 160ms ease;
+}
 
-  .skill-panel[data-active="true"] .skill-body {
-    display: block;
-  }
+#skills .skills-goo-item {
+  cursor: default;
+  transition: transform ease-out 200ms, background 160ms ease, color 160ms ease;
+  z-index: 1;
+  padding: 9px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  text-align: center;
+  text-wrap: balance;
+  overflow: hidden;
+}
+
+#skills .skills-goo-item:hover {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--skills-accent, var(--accent));
+}
+
+#skills .skills-goo-item:focus-visible {
+  box-shadow: var(--focus), 0 18px 42px rgba(0, 0, 0, 0.18);
+}
+
+#skills .skills-goo-open:checked + .skills-goo-open-button {
+  transform: scale(0.88);
+  transition-timing-function: linear;
+}
+
+#skills .skills-goo-open:checked + .skills-goo-open-button .skills-goo-title {
+  opacity: 0.92;
+  transform: scale(0.96);
+}
+
+#skills .skills-goo-open:checked ~ .skills-goo-item {
+  transition-timing-function: cubic-bezier(0.935, 0, 0.34, 1.33);
+  transition-duration: var(--dur, 180ms);
+  transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0);
+}
+
+.skillsGooDefs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .skill-panel,
-  .skill-panel::before,
-  .skill-rail,
-  .skill-content {
-    transition: none;
+  #skills .skills-goo-open-button,
+  #skills .skills-goo-item,
+  #skills .skills-goo-title {
+    transition: none !important;
   }
 }
 
