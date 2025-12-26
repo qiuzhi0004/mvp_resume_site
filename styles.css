@@ -1361,12 +1361,56 @@ html.js .reveal.is-visible {
 }
 
 #projects .portfolioModule {
+  --proj-bg-x: 0px;
+  --proj-bg-y: 0px;
+  --proj-bg-opacity: 0.62;
+  --proj-glow-x: 0px;
+  --proj-glow-opacity: 0.75;
   border: 1px solid var(--line);
   border-radius: 22px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.55));
+  background:
+    radial-gradient(980px 620px at 10% 0%, rgba(122, 92, 255, 0.18), transparent 60%),
+    radial-gradient(820px 520px at 92% 10%, rgba(34, 197, 94, 0.12), transparent 60%),
+    radial-gradient(760px 520px at 55% 110%, rgba(245, 158, 11, 0.1), transparent 62%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.55));
   box-shadow: var(--shadow);
   overflow: hidden;
   position: relative;
+  isolation: isolate;
+}
+
+#projects .portfolioModule::before {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--proj-bg-opacity, 0.62);
+  filter: blur(26px) saturate(1.15);
+  transform: translate3d(var(--proj-bg-x, 0px), var(--proj-bg-y, 0px), 0);
+  background:
+    radial-gradient(900px 560px at 18% 12%, rgba(122, 92, 255, 0.22), transparent 62%),
+    radial-gradient(860px 520px at 86% 16%, rgba(34, 197, 94, 0.16), transparent 62%),
+    radial-gradient(820px 520px at 52% 108%, rgba(245, 158, 11, 0.14), transparent 62%);
+}
+
+#projects .portfolioModule::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0)),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  opacity: 0.9;
+}
+
+#projects .portfolioModule .moduleHeader,
+#projects .portfolioModule #view3d,
+#projects .portfolioModule #view2d {
+  position: relative;
+  z-index: 1;
 }
 
 #projects .moduleHeader {
@@ -1460,8 +1504,11 @@ html.js .reveal.is-visible {
   position: relative;
   height: 640px;
   background:
-    radial-gradient(1200px 480px at 40% 0%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.65)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(242, 240, 234, 0.92));
+    radial-gradient(900px 520px at 20% 0%, rgba(122, 92, 255, 0.16), transparent 58%),
+    radial-gradient(860px 520px at 86% 10%, rgba(34, 197, 94, 0.12), transparent 62%),
+    radial-gradient(880px 640px at 52% 110%, rgba(245, 158, 11, 0.1), transparent 62%),
+    radial-gradient(1200px 480px at 40% 0%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.62)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(242, 240, 234, 0.92));
 }
 
 #projects .hud {
@@ -1534,10 +1581,10 @@ html.js .reveal.is-visible {
   top: 16%;
   width: 1100px;
   height: 260px;
-  transform: translateX(-50%);
+  transform: translateX(calc(-50% + var(--proj-glow-x, 0px)));
   background: radial-gradient(600px 160px at 50% 40%, rgba(255, 255, 255, 0.85), transparent 70%);
   filter: blur(2px);
-  opacity: 0.75;
+  opacity: var(--proj-glow-opacity, 0.75);
   pointer-events: none;
   z-index: 0;
 }
@@ -1568,9 +1615,32 @@ html.js .reveal.is-visible {
   overflow: visible;
 }
 
+#projects .frame[data-active="true"] .frameInner {
+  transform: translateZ(40px);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.18);
+}
+
+#projects .frame[data-active="true"] .frameInner::before {
+  background: linear-gradient(180deg, rgba(122, 92, 255, 0.12), rgba(34, 197, 94, 0.04));
+}
+
+#projects .frame[data-active="true"] .frameInner::after {
+  opacity: 0.55;
+}
+
+#projects .frame[data-active="true"] .plaque {
+  border-color: rgba(122, 92, 255, 0.22);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(122, 92, 255, 0.14);
+}
+
 #projects .frame:hover .frameInner {
   transform: translateZ(30px);
   box-shadow: 0 26px 78px rgba(0, 0, 0, 0.18);
+}
+
+#projects .frame[data-active="true"]:hover .frameInner {
+  transform: translateZ(46px);
+  box-shadow: 0 34px 98px rgba(0, 0, 0, 0.2);
 }
 
 #projects .frameInner::before {

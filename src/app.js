@@ -825,19 +825,20 @@ function initPortfolioProjectsModule() {
      3D ribbon rendering + interaction
      ========================== */
   let frames3d = [];
-  const galleryState = {
-    scroll: 0,
-    tscroll: 0,
-    maxScroll: 0,
-    initialized: false,
-    dragging: false,
-    pressId: null,
-    pressIndex: -1,
-    startX: 0,
-    startTscroll: 0,
-    raf: null,
-    justDragged: false,
-  };
+	  const galleryState = {
+	    scroll: 0,
+	    tscroll: 0,
+	    maxScroll: 0,
+	    initialized: false,
+	    dragging: false,
+	    pressId: null,
+	    pressIndex: -1,
+	    startX: 0,
+	    startTscroll: 0,
+	    raf: null,
+	    justDragged: false,
+	    v: 0,
+	  };
 
   let bound3d = false;
 
@@ -909,44 +910,82 @@ function initPortfolioProjectsModule() {
     layoutRibbon();
   }
 
-  function layoutRibbon() {
-    if (!frames3d.length) return;
+	  function layoutRibbon() {
+	    if (!frames3d.length) return;
 
-    const w = world.clientWidth || 1120;
-    const stepX = Math.round(w * 0.26);
-    const stepY = -Math.round(w * 0.016);
-    const stepZ = -Math.round(w * 0.22);
+	    const w = world.clientWidth || 1120;
+	    const stepX = Math.round(w * 0.26);
+	    const stepY = -Math.round(w * 0.016);
+	    const stepZ = -Math.round(w * 0.22);
 
-    const baseRy = -18;
-    const baseRx = 4;
+	    const baseRy = -18;
+	    const baseRx = 4;
 
-    frames3d.forEach((frame, i) => {
-      const d = i - galleryState.scroll;
-      const abs = Math.abs(d);
+	    const v = clamp(galleryState.v || 0, -1.6, 1.6);
 
-      const x = d * stepX;
-      const y = d * stepY;
-      const z = d * stepZ;
-      const ry = baseRy - d * 2.6;
-      const rx = baseRx;
+	    frames3d.forEach((frame, i) => {
+	      const d = i - galleryState.scroll;
+	      const abs = Math.abs(d);
 
-      const scale = 1 - Math.min(abs * 0.05, 0.26);
-      const opacity = clamp(1 - abs * 0.18, 0, 1);
-      const blur = Math.min(abs * 0.9, 5);
+	      const x = d * stepX;
+	      const y = d * stepY;
+	      const z = d * stepZ;
+	      const ry = baseRy - d * 2.6;
+	      const rx = baseRx;
+	      const rz = v * 4.2 * Math.max(0, 1 - abs * 0.65);
 
-      frame.style.transform = `translate(-50%,-50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) rotateX(${rx}deg) scale(${scale})`;
-      frame.style.opacity = opacity.toFixed(3);
-      frame.style.filter = blur ? `blur(${blur.toFixed(2)}px)` : "";
-      frame.style.pointerEvents = opacity < 0.08 ? "none" : "auto";
-      frame.style.zIndex = String(1000 - Math.round(d * 20));
-    });
-  }
+	      const scale = 1 - Math.min(abs * 0.05, 0.26);
+	      const opacity = clamp(1 - abs * 0.18, 0, 1);
+	      const blur = Math.min(abs * 0.9, 5);
 
-  function applyRibbon() {
-    galleryState.scroll += (galleryState.tscroll - galleryState.scroll) * 0.12;
-    galleryState.scroll = clamp(galleryState.scroll, 0, galleryState.maxScroll);
-    layoutRibbon();
-  }
+	      frame.style.transform = `translate(-50%,-50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) rotateX(${rx}deg) rotateZ(${rz}deg) scale(${scale})`;
+	      frame.style.opacity = opacity.toFixed(3);
+	      frame.style.filter = blur ? `blur(${blur.toFixed(2)}px)` : "";
+	      frame.style.pointerEvents = opacity < 0.08 ? "none" : "auto";
+	      frame.style.zIndex = String(1000 - Math.round(d * 20));
+
+	      if (abs < 0.45) frame.dataset.active = "true";
+	      else delete frame.dataset.active;
+	    });
+	  }
+
+	  function applyProjectFx() {
+	    if (typeof window === "undefined") return;
+	    if (!moduleRoot) return;
+	    if (!view3d.classList.contains("show")) return;
+
+	    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)")?.matches;
+	    if (reduceMotion) {
+	      moduleRoot.style.setProperty("--proj-bg-x", "0px");
+	      moduleRoot.style.setProperty("--proj-bg-y", "0px");
+	      moduleRoot.style.setProperty("--proj-bg-opacity", "0.62");
+	      moduleRoot.style.setProperty("--proj-glow-x", "0px");
+	      moduleRoot.style.setProperty("--proj-glow-opacity", "0.75");
+	      return;
+	    }
+
+	    const v = clamp(galleryState.v || 0, -1.6, 1.6);
+	    const vAbs = Math.abs(v);
+	    const mid = galleryState.maxScroll ? galleryState.maxScroll * 0.5 : 0;
+	    const baseX = (galleryState.scroll - mid) * -26;
+	    const bgX = baseX + clamp(-v * 140, -180, 180);
+	    const bgY = clamp(-vAbs * 18, -28, 0);
+
+	    moduleRoot.style.setProperty("--proj-bg-x", `${bgX.toFixed(1)}px`);
+	    moduleRoot.style.setProperty("--proj-bg-y", `${bgY.toFixed(1)}px`);
+	    moduleRoot.style.setProperty("--proj-bg-opacity", (0.62 + Math.min(vAbs * 0.18, 0.2)).toFixed(3));
+	    moduleRoot.style.setProperty("--proj-glow-x", `${clamp(-v * 90, -120, 120).toFixed(1)}px`);
+	    moduleRoot.style.setProperty("--proj-glow-opacity", (0.75 + Math.min(vAbs * 0.12, 0.18)).toFixed(3));
+	  }
+
+	  function applyRibbon() {
+	    const delta = galleryState.tscroll - galleryState.scroll;
+	    galleryState.v += (delta - (galleryState.v || 0)) * 0.24;
+	    galleryState.scroll += delta * 0.12;
+	    galleryState.scroll = clamp(galleryState.scroll, 0, galleryState.maxScroll);
+	    applyProjectFx();
+	    layoutRibbon();
+	  }
 
   function tick() {
     if (view3d.classList.contains("show")) applyRibbon();
