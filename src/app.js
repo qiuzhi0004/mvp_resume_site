@@ -75,21 +75,39 @@ function renderHero(data) {
     );
   }
 
+  const summaryNode = document.getElementById("heroSummary");
+  if (summaryNode) {
+    const summaryText = String(
+      highlights.find((h) => {
+        const text = String(h ?? "").trim();
+        if (!text) return false;
+        return !/^\s*关键词[:：]/.test(text);
+      }) ?? ""
+    ).trim();
+    summaryNode.textContent = summaryText;
+    summaryNode.classList.add("reveal");
+    summaryNode.style.transitionDelay = "140ms";
+    summaryNode.classList.toggle("is-empty", !summaryText);
+  }
+
   const subtitleParts = [];
   if (basics.location) subtitleParts.push(basics.location);
   if (basics.email) subtitleParts.push(basics.email);
   if (basics.phone) subtitleParts.push(basics.phone);
-  setText("heroSubtitle", subtitleParts.length ? subtitleParts.join("｜") : "TODO：补充基本信息（地点/邮箱/电话）");
   const heroSubtitle = document.getElementById("heroSubtitle");
-  if (heroSubtitle) heroSubtitle.classList.add("reveal");
-  if (heroSubtitle) heroSubtitle.style.transitionDelay = "140ms";
+  if (heroSubtitle) {
+    const subtitleText = subtitleParts.length ? subtitleParts.join(" · ") : "";
+    heroSubtitle.textContent = subtitleText;
+    heroSubtitle.classList.add("reveal");
+    heroSubtitle.style.transitionDelay = "220ms";
+    heroSubtitle.classList.toggle("is-empty", !subtitleText);
+  }
 
   const list = document.getElementById("heroHighlights");
-  list.replaceChildren(
-    ...highlights.slice(0, 5).map((h, i) =>
-      el("li", { class: "reveal", style: `transition-delay: ${220 + i * 60}ms`, text: h })
-    )
-  );
+  if (list) {
+    list.replaceChildren();
+    list.classList.add("is-empty");
+  }
 
   const cta = document.getElementById("heroCta");
   const contactBtn = el("a", { class: "btn primary", href: "#contact", text: "联系我" });
@@ -162,8 +180,9 @@ function initExperienceTimeline(timelineRoot) {
       .map((block) => {
         const img = block.querySelector(".cd-timeline__img");
         const content = block.querySelector(".cd-timeline__content");
+        const opposite = block.querySelector(".cd-timeline__opposite");
         if (!img || !content) return null;
-        return { block, img, content };
+        return { block, img, content, opposite };
       })
       .filter(Boolean);
 
@@ -178,6 +197,7 @@ function initExperienceTimeline(timelineRoot) {
     for (const row of rows) {
       row.img.classList.remove("cd-timeline__img--hidden", "cd-timeline__img--bounce-in");
       row.content.classList.remove("cd-timeline__content--hidden", "cd-timeline__content--bounce-in");
+      row.opposite?.classList.remove("cd-timeline__opposite--hidden", "cd-timeline__opposite--bounce-in");
     }
 
     if (reduce || !desktop || !("IntersectionObserver" in window)) return;
@@ -197,6 +217,8 @@ function initExperienceTimeline(timelineRoot) {
           row.content.classList.remove("cd-timeline__content--hidden");
           row.img.classList.add("cd-timeline__img--bounce-in");
           row.content.classList.add("cd-timeline__content--bounce-in");
+          row.opposite?.classList.remove("cd-timeline__opposite--hidden");
+          row.opposite?.classList.add("cd-timeline__opposite--bounce-in");
           obs?.unobserve(row.block);
         }
       },
@@ -208,6 +230,7 @@ function initExperienceTimeline(timelineRoot) {
       if (!shouldHide) continue;
       row.img.classList.add("cd-timeline__img--hidden");
       row.content.classList.add("cd-timeline__content--hidden");
+      row.opposite?.classList.add("cd-timeline__opposite--hidden");
       obs.observe(row.block);
     }
   };
@@ -276,6 +299,7 @@ function renderExperience(data) {
             ])
           : null,
       ]),
+      dateText ? el("div", { class: "cd-timeline__opposite", text: dateText }) : null,
     ]);
   });
 

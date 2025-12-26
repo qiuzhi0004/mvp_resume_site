@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="个人简历网站（MVP）" />
     <title>简历</title>
-    <link rel="stylesheet" href="./styles.css?v=20251226-portfolio2" />
+    <link rel="stylesheet" href="./styles.css?v=20251226-hero7" />
   </head>
   <body>
     <a class="skip-link" href="#main">跳到正文</a>
@@ -30,10 +30,21 @@
 
     <main id="main" class="container">
       <section id="hero" class="section hero" aria-labelledby="heroTitle">
-        <h1 id="heroTitle" class="hero-title">加载中…</h1>
-        <p class="hero-subtitle" id="heroSubtitle">正在读取数据文件</p>
-        <ul class="hero-highlights" id="heroHighlights"></ul>
-        <div class="hero-cta" id="heroCta"></div>
+        <div class="heroShell">
+          <div class="heroCopy">
+            <h1 id="heroTitle" class="hero-title">加载中…</h1>
+            <p class="hero-summary" id="heroSummary"></p>
+            <p class="hero-subtitle" id="heroSubtitle">正在读取数据文件</p>
+            <ul class="hero-highlights" id="heroHighlights"></ul>
+            <div class="hero-cta" id="heroCta"></div>
+          </div>
+
+          <div class="heroMedia" aria-hidden="true">
+            <div class="heroPortrait">
+              <img src="./assets/professional-photo.png" alt="个人照片" loading="eager" decoding="async" />
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="experience" class="section" aria-labelledby="experienceTitle">
@@ -161,6 +172,6 @@
       </div>
     </noscript>
 
-    <script src="./src/app.js?v=20251226-portfolio" defer></script>
+    <script src="./src/app.js?v=20251226-hero4" defer></script>
   </body>
 </html>
