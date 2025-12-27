@@ -6,14 +6,15 @@
     <meta name="description" content="个人简历网站（MVP）" />
     <title>简历</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=20251226-blackhole2" />
-  </head>
-  <body>
-    <a class="skip-link" href="#main">跳到正文</a>
+    <link rel="stylesheet" href="./styles.css?v=20251226-interactions1" />
+	  </head>
+	  <body>
+	    <a class="skip-link" href="#main">跳到正文</a>
+	    <canvas id="mouseMoveFx" aria-hidden="true"></canvas>
 
-    <header class="site-header">
-      <div class="container header-inner">
-        <div class="brand">
+	    <header class="site-header">
+	      <div class="container header-inner">
+	        <div class="brand">
           <span class="brand-mark" aria-hidden="true">CV</span>
           <span class="brand-text" id="brandText">简历</span>
         </div>
@@ -81,8 +82,8 @@
             </div>
 
             <div class="actions">
-              <button class="btn btnPrimary" id="btnToList" type="button">列表模式</button>
-              <button class="btn btnGhost" id="btnToGallery" type="button" style="display: none;">画廊模式</button>
+              <button class="btn btnPrimary fx-btn" id="btnToList" type="button">列表模式</button>
+              <button class="btn btnGhost fx-btn" id="btnToGallery" type="button" style="display: none;">画廊模式</button>
             </div>
           </div>
 
@@ -137,7 +138,7 @@
                 <h2 id="mTitle">标题</h2>
                 <div class="mini" id="mHook">一句话</div>
               </div>
-              <button class="closeBtn" id="mClose" title="关闭" type="button">✕</button>
+              <button class="closeBtn fx-btn" id="mClose" title="关闭" type="button">✕</button>
             </div>
             <div class="modalBody" id="mBody"></div>
           </div>
@@ -305,7 +306,8 @@
       </div>
     </noscript>
 
-    <script src="./src/app.js?v=20251226-projectfx1" defer></script>
+    <script src="./src/app.js?v=20251226-interactions1" defer></script>
     <script type="module" src="./src/black-hole.mjs?v=20251226-blackhole2"></script>
+    <script src="./src/mouse-move-fx.js?v=20251227-mousefx2" defer></script>
   </body>
 </html>

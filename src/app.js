@@ -1672,7 +1672,7 @@ function renderContact(data) {
   if (isMeaningful(basics.email)) {
     actions.push(
       el("button", {
-        class: "icon-btn",
+        class: "icon-btn fx-btn",
         type: "button",
         "aria-label": "复制邮箱",
         title: "复制邮箱",
@@ -1691,7 +1691,7 @@ function renderContact(data) {
   if (isMeaningful(basics.wechat)) {
     actions.push(
       el("button", {
-        class: "icon-btn",
+        class: "icon-btn fx-btn",
         type: "button",
         "aria-label": "复制微信号",
         title: "复制微信号",
@@ -1711,7 +1711,7 @@ function renderContact(data) {
   if (isMeaningful(basics.phone)) {
     actions.push(
       el("button", {
-        class: "icon-btn",
+        class: "icon-btn fx-btn",
         type: "button",
         "aria-label": "复制电话",
         title: "复制电话",
@@ -1732,7 +1732,7 @@ function renderContact(data) {
     const key = label.toLowerCase();
     const kind = key.includes("github") ? "github" : key.includes("linkedin") ? "linkedin" : "link";
     const a = el("a", {
-      class: "icon-btn",
+      class: "icon-btn fx-btn",
       href: String(url),
       target: "_blank",
       rel: "noreferrer",

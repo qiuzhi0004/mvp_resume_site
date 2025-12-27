@@ -78,6 +78,16 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Mouse-move background FX (DenDionigi/raeELZR-inspired) */
+#mouseMoveFx {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -2508,6 +2518,107 @@ details:not([open]) .project-chevron::before {
 .icon-btn svg {
   width: 18px;
   height: 18px;
+}
+
+/* Button FX (NeilSchulz/ZYOzJWq-inspired) */
+.fx-btn {
+  --fx-border: 2px;
+  --fx-radius: 14px;
+  --fx-bg: rgba(255, 255, 255, 0.76);
+  --fx-fg: var(--text);
+  --fx-c1: rgba(122, 92, 255, 0.95);
+  --fx-c2: rgba(34, 197, 94, 0.9);
+  --fx-c3: rgba(245, 158, 11, 0.85);
+  position: relative;
+  border: 0 !important;
+  border-radius: var(--fx-radius);
+  background: var(--fx-bg) !important;
+  color: var(--fx-fg) !important;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.fx-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: var(--fx-border);
+  background: conic-gradient(from 0deg, var(--fx-c1), var(--fx-c2), var(--fx-c3), var(--fx-c1));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: fxBtnSpin 3.2s linear infinite;
+  opacity: 0.95;
+}
+
+.fx-btn::after {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  filter: blur(18px);
+  background:
+    radial-gradient(160px 80px at 20% 0%, rgba(122, 92, 255, 0.28), transparent 60%),
+    radial-gradient(140px 90px at 95% 20%, rgba(34, 197, 94, 0.18), transparent 62%),
+    radial-gradient(180px 120px at 50% 110%, rgba(245, 158, 11, 0.14), transparent 64%);
+  transition: opacity 180ms ease;
+}
+
+.fx-btn:hover::after {
+  opacity: 1;
+}
+
+.fx-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+}
+
+.fx-btn:active {
+  transform: translateY(0);
+}
+
+.fx-btn:focus-visible {
+  box-shadow: var(--focus), 0 14px 30px rgba(0, 0, 0, 0.12);
+}
+
+.btnPrimary.fx-btn {
+  --fx-bg: rgba(122, 92, 255, 0.12);
+  --fx-c1: rgba(122, 92, 255, 0.95);
+  --fx-c2: rgba(96, 165, 250, 0.9);
+  --fx-c3: rgba(34, 197, 94, 0.85);
+}
+
+.btnGhost.fx-btn {
+  --fx-bg: rgba(255, 255, 255, 0.35);
+}
+
+.icon-btn.fx-btn {
+  --fx-radius: var(--radius-sm);
+  --fx-border: 2px;
+}
+
+.closeBtn.fx-btn {
+  --fx-radius: 14px;
+  --fx-border: 2px;
+}
+
+@keyframes fxBtnSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-btn::before,
+  .fx-btn:hover {
+    animation: none;
+    transform: none;
+  }
 }
 
 .list {
