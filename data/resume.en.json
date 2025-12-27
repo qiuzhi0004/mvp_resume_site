@@ -1,0 +1,228 @@
+{
+  "meta": {
+    "lastUpdated": "2025-12-26"
+  },
+  "basics": {
+    "name": "Kai Chen",
+    "headline": "Growth PM / Product Operations",
+    "location": "",
+    "email": "kai.chen@demo.com",
+    "wechat": "",
+    "phone": "",
+    "links": [
+      { "label": "GitHub", "url": "https://github.com/kai-chen-demo" },
+      { "label": "Website", "url": "https://kai-demo.vercel.app" }
+    ]
+  },
+  "highlights": [
+    "AI-native growth & product ops: turn strategy into runnable experiments, turn operations into automation, and turn a resume into an explorable product.",
+    "Keywords: vibe coding / AI workflow / growth experiments / lifecycle / analytics",
+    "Google Maps: Streak task system A/B (28 days) → +11.8% 7-day repeat contributions.",
+    "Google Maps: First-contribution guided flow A/B (14 days) → +14.2% completion, -10.5pp drop-off.",
+    "Microsoft Teams: Recap sharing prompt A/B (21 days) → +8.4% share rate, +12.7% second opens by recipients."
+  ],
+  "experience": [
+    {
+      "title": "Google | Growth Product Intern (Google Maps)",
+      "org": "Google",
+      "role": "Growth Product Intern (Google Maps)",
+      "location": "Mountain View, CA",
+      "start": "2024.06",
+      "end": "2024.10",
+      "summary": [
+        "Owned growth for Google Maps “Local contributions” funnel: onboarding → incentives → repeat contributions"
+      ],
+      "achievements": [
+        "Led 2 A/B experiments (task system, push cadence); standardized instrumentation definitions and weekly review cadence"
+      ],
+      "details": [
+        "At Google Maps, I focused on turning “first contribution → ongoing contributions” in Local contributions into a measurable growth loop: define the funnel and KPI set, diagnose friction points, and ship end-to-end A/B experiments.",
+        "I delivered two core tracks: (1) productized a continuous-contribution Streak mechanism for Local Guides (task tiers, discoverable entry points, behavior-triggered push) so users always knew the next best action after their first contribution; (2) redesigned the first-contribution experience from a doc-like instructions page into a 1‑minute, 3‑step guided flow to reduce drop-off and help users reach a “visible win” quickly.",
+        "Results: the Streak experiment increased 7‑day repeat contribution rate by +11.8% and entry-point CTR by +9.6%; the guided flow increased first-contribution completion by +14.2% and reduced guide-page drop-off by 10.5pp (also improving next-day retention for new contributors by +3.1%).",
+        "Operationally, I partnered with PM/design/engineering/data to align event definitions and establish a weekly review cadence, ensuring each iteration is discussed in the same measurement language. The takeaway: growth isn’t always “more rewards”—it’s often about making the next action irresistibly obvious and reachable."
+      ]
+    },
+    {
+      "title": "Microsoft | Product Operations Intern (Microsoft Teams)",
+      "org": "Microsoft",
+      "role": "Product Operations Intern (Microsoft Teams)",
+      "location": "Redmond, WA",
+      "start": "2024.11",
+      "end": "2025.03",
+      "summary": [
+        "Owned key conversion behaviors across the meeting lifecycle: schedule, attend, recap, share"
+      ],
+      "achievements": [
+        "Built KPI dashboard + anomaly alerts; drove one guidance iteration to launch"
+      ],
+      "details": [
+        "At Microsoft Teams, I worked in Product Operations for meeting experiences—helping the team use data to locate issues, design experiments, and ship improvements across pre/in/post-meeting behaviors (schedule, attend, recap, share).",
+        "I first built the meeting experience dashboard and anomaly alerting: unified metric definitions (attendance rate, Recap open rate, watch completion, share rate, etc.), decomposed tracking into event-level signals (view_recap / click_share / open_shared_link), and enabled segmentation by org size, meeting size, industry, and client (desktop/mobile). Anomalies automatically pinged the team channel.",
+        "I then helped run a post-meeting “Recap sharing prompt” experiment: replaced a generic button with contextual copy, clearer permission messaging, and segmented triggering—prioritizing users who opened Recap within 24 hours and meetings with ≥6 attendees.",
+        "Result: +8.4% Recap share rate, +12.7% second opens by recipients, and 18% fewer negative signals. This reinforced that B2B growth often comes from optimizing how value is passed to the next user—and consistent measurement definitions are the shared language for cross-functional collaboration."
+      ]
+    },
+    {
+      "title": "Apple | App Store Editorial Ops Intern",
+      "org": "Apple",
+      "role": "App Store Editorial Ops Intern",
+      "location": "Cupertino, CA",
+      "start": "2025.04",
+      "end": "2025.06",
+      "summary": [
+        "Supported App Store “Today” editorial planning and feature-page operations"
+      ],
+      "achievements": [
+        "Standardized content submission + asset validation workflow to reduce rework and shorten time-to-publish"
+      ],
+      "details": [
+        "At Apple App Store, I supported “Today” editorial planning and feature-page operations, focusing on making the multi-party publishing pipeline smoother: reduce asset rework, shorten cycle time from topic selection to launch, and make cross-team collaboration (editors/design/localization/assets) more predictable.",
+        "I standardized the submission workflow: created an asset checklist (dimensions, naming, copyright statement, screenshot versioning), and built a Notion template that breaks “topic → assets → review → localization → publish” into trackable steps (owners + deadlines).",
+        "I also introduced a pre-check stage to automatically validate asset specs, and reviewed 10 historical features to extract the top 5 rework causes—mapping each to a rule/checkpoint so errors are caught upstream.",
+        "Result: average feature launch cycle reduced from 10 days to 7 days, and asset rework dropped by 35%. This experience strengthened my belief that editorial operations can be productized as “workflow experience optimization.”"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Google Maps: Local Guides “Streak” task system (growth mechanics)",
+      "context": "After a user’s first contribution, revisit and repeat-contribution rates were low—many users wanted to contribute but didn’t know what to do next. Goal: increase 7‑day repeat contributions and reduce post-first-contribution churn.",
+      "actions": [
+        "Designed a 3-tier task system: beginner (1 contribution) → advanced (3) → easter egg (7‑day streak)",
+        "Productized the entry point: surfaced tasks in-context after the first contribution; improved discoverability",
+        "Triggered push notifications based on task state and user cadence; tuned frequency to avoid fatigue",
+        "Set up KPI + monitoring: repeat contribution rate, entry CTR, push opt-out, and weekly review"
+      ],
+      "result": "+11.8% 7‑day repeat contribution rate; +9.6% entry-point CTR; no significant increase in push opt-out (<0.3pp).",
+      "evidence": [],
+      "screenshots": [],
+      "reflection": "Growth mechanics work best when “next action” is obvious and the loop is measurable.",
+      "tags": ["Growth", "Mechanics", "A/B testing"]
+    },
+    {
+      "name": "Google Maps: “First contribution” onboarding — from docs to a 1‑minute guided flow",
+      "context": "The original onboarding page read like a manual: high drop-off and low completion. Goal: improve First Contribution Completion.",
+      "actions": [
+        "Redesigned onboarding into a 3-step guide: choose type (photo/review/fix) → 1-screen example → create immediately",
+        "Simplified information density and removed non-essential text; emphasized a quick “first win”",
+        "Added contextual tips and guardrails (what good looks like, common mistakes) without interrupting flow",
+        "Ran A/B test and iterated copy and pacing based on behavioral analytics"
+      ],
+      "result": "+14.2% first contribution completion; -10.5pp guide-page drop-off; +3.1% next-day retention for new contributors.",
+      "evidence": [],
+      "screenshots": [],
+      "reflection": "Onboarding is not explanation—it’s guided action with feedback.",
+      "tags": ["Onboarding", "Conversion", "Experimentation"]
+    },
+    {
+      "name": "Microsoft Teams: Post-meeting “Recap sharing” prompt to improve distribution and reuse",
+      "context": "Many users read Recap but rarely share it with non-attendees, limiting value diffusion. Goal: increase Recap share rate and recipient re-opens.",
+      "actions": [
+        "Added a contextual “one-click share” prompt on Recap; recommended likely collaborators",
+        "Rewrote CTA copy to match intent (send to people who missed the meeting) and reduce hesitation",
+        "Improved permission messaging to clarify visibility and avoid “leak” anxiety",
+        "Segmented triggers: prioritize meetings with ≥6 attendees and users opening Recap within 24h"
+      ],
+      "result": "+8.4% Recap share rate; +12.7% second opens by recipients; -18% negative signals.",
+      "evidence": [],
+      "screenshots": [],
+      "reflection": "B2B growth often comes from helping value reach the next user.",
+      "tags": ["B2B", "Distribution", "Growth experiments"]
+    },
+    {
+      "name": "Microsoft Teams: Meeting experience dashboard + anomaly alerts (metrics system)",
+      "context": "Metric definitions for attendance, watch, share, and engagement were inconsistent—reviews often devolved into debate. Goal: unify definitions and build daily monitoring (detect anomalies same day).",
+      "actions": [
+        "Created a metrics glossary: attendance rate, late join rate, Recap open rate, watch completion, share rate, engagement",
+        "Decomposed tracking into event-level signals: view_recap / click_share / open_shared_link / watch_recording",
+        "Built segmented dashboards in Looker/Power BI: org size, meeting size, industry, client (desktop/mobile)",
+        "Added anomaly alerts (e.g., “watch completion drops >5% on a client version”) to Teams/Slack channels"
+      ],
+      "result": "Review meeting time -30%; identified 2 real issues (mobile permission copy / watch stutter on a specific version); faster experiment iteration.",
+      "evidence": [],
+      "screenshots": [],
+      "reflection": "Before growth, align language—metrics are the shared language of collaboration.",
+      "tags": ["Metrics", "Monitoring", "Alerting"]
+    },
+    {
+      "name": "Apple App Store: “Productivity Tools Week” — planning + publishing workflow optimization",
+      "context": "Launching a feature is multi-party (editors/design/localization/assets), with high rework and long cycles. Goal: shorten time from topic to publish and reduce asset rework.",
+      "actions": [
+        "Standardized asset submission: dimensions, naming, copyright statement, screenshot versioning",
+        "Built a Notion template for the pipeline: topic → assets → review → localization → publish (owner + deadline)",
+        "Introduced pre-check validations for asset specs to reduce rejections",
+        "Reviewed 10 historical features; summarized TOP5 rework causes and mapped them to checks"
+      ],
+      "result": "Average launch cycle 10 days → 7 days; asset rework -35%; smoother collaboration cadence.",
+      "evidence": [],
+      "screenshots": [],
+      "reflection": "Editorial ops can be productized as workflow experience optimization.",
+      "tags": ["Process", "Operations", "Collaboration"]
+    },
+    {
+      "name": "Personal: “Growth Portfolio” interactive resume site (vibe coding)",
+      "context": "Make a resume an explorable product—not a PDF. Goal: in 10s you get who I am; in 1min you see work; in 3min you trust the story.",
+      "actions": [
+        "Hero as a “business card”: one-line positioning + three entry points (Projects / Timeline / Contact)",
+        "Timeline as a draggable, scrollable narrative (like a product iteration history)",
+        "Projects as a gallery: each card opens to goal/process/results",
+        "Skills as an interactive bubble cloud to connect skills to proof"
+      ],
+      "result": "3 mock-interview feedback sessions: more memorable work, stronger “product sense” signal; treated the site as a growth experiment and iterated copy/layout/order based on attention and clicks.",
+      "evidence": [],
+      "screenshots": [],
+      "reflection": "Your portfolio is a product—interaction and narrative are product skills.",
+      "tags": ["Personal project", "Frontend", "Storytelling"]
+    }
+  ],
+  "skills": [
+    {
+      "group": "Growth",
+      "items": [
+        "Funnel analysis, user segmentation, lifecycle operations, incentive design, A/B testing"
+      ]
+    },
+    {
+      "group": "Product",
+      "items": [
+        "PRD, information architecture, onboarding, instrumentation planning, cross-functional execution"
+      ]
+    },
+    {
+      "group": "Data",
+      "items": ["SQL (basic), Looker/Power BI, GA4/Amplitude"]
+    },
+    {
+      "group": "Tooling",
+      "items": ["vibe coding (rapid demos), automation scripts, Next.js/Vercel, Figma/Notion"]
+    }
+  ],
+  "education": [
+    {
+      "school": "Harvard University",
+      "degree": "B.A. in Economics",
+      "major": "Minor: Computer Science",
+      "start": "2021.09",
+      "end": "2025.05"
+    },
+    {
+      "school": "Stanford University",
+      "degree": "M.S. in Management Science & Engineering",
+      "major": "Focus: data-driven growth & experiment design",
+      "start": "2025.09",
+      "end": "2027.06"
+    },
+    {
+      "school": "Massachusetts Institute of Technology",
+      "degree": "Ph.D. in Management",
+      "major": "Research: user behavior modeling & growth systems",
+      "start": "2027.09",
+      "end": "2031.06"
+    }
+  ],
+  "certifications": ["Harvard Product Lab (Product Practicum)", "AI Builders (Tool co-creation)"],
+  "download": {
+    "label": "Download PDF Resume",
+    "pdfPath": "./resume.pdf"
+  }
+}

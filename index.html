@@ -6,10 +6,10 @@
     <meta name="description" content="个人简历网站（MVP）" />
     <title>简历</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=20251227-skillsbtn4" />
+    <link rel="stylesheet" href="./styles.css?v=20251227-lang1" />
 	  </head>
 	  <body>
-	    <a class="skip-link" href="#main">跳到正文</a>
+	    <a class="skip-link" id="skipLink" href="#main">跳到正文</a>
 	    <canvas id="mouseMoveFx" aria-hidden="true"></canvas>
 
 	    <header class="site-header">
@@ -26,6 +26,7 @@
           <a href="#education">教育</a>
           <a href="#contact">联系</a>
           <a href="#download" data-download-link="true">下载</a>
+          <button class="nav-lang fx-btn" id="langToggle" type="button" aria-label="切换到英文">EN</button>
         </nav>
       </div>
     </header>
@@ -306,7 +307,7 @@
       </div>
     </noscript>
 
-    <script src="./src/app.js?v=20251227-skillsbtn3" defer></script>
+    <script src="./src/app.js?v=20251227-lang4" defer></script>
     <script type="module" src="./src/black-hole.mjs?v=20251226-blackhole2"></script>
     <script src="./src/mouse-move-fx.js?v=20251227-mousefx2" defer></script>
   </body>

@@ -1,5 +1,390 @@
-const DATA_URL = "./data/resume.json";
+const LANG_STORAGE_KEY = "resumeLang";
+const DATA_URL_BY_LANG = {
+  zh: "./data/resume.json",
+  en: "./data/resume.en.json",
+};
+
+const I18N = {
+  zh: {
+    "lang.switchToEnglish": "切换到英文",
+    "lang.switchToChinese": "切换到中文",
+    "common.present": "至今",
+    "common.close": "关闭",
+    "common.loadingFailedTitle": "加载失败：请用本地服务器预览",
+    "common.loadingFailedSubtitle": "例如在该目录运行：python3 -m http.server 5173",
+    "skipLink": "跳到正文",
+    "nav.aria": "页面导航",
+    "nav.hero": "概览",
+    "nav.experience": "经历",
+    "nav.projects": "项目",
+    "nav.skills": "技能",
+    "nav.education": "教育",
+    "nav.contact": "联系",
+    "nav.download": "下载",
+    "section.experience": "经历",
+    "section.skills": "技能",
+    "section.bootcamp": "训练营",
+    "section.bootcampDesc": "一些训练营照片：可拖拽摆放，点击聚焦。",
+    "section.education": "教育 / 证书",
+    "section.contact": "联系",
+    "section.contactDesc": "含一键复制。",
+    "section.download": "下载简历",
+    "section.certificates": "证书展示",
+    "section.certificatesDesc": "点击图片即可切换查看。",
+    "hero.contact": "联系我",
+    "hero.download": "下载简历",
+    "hero.orbitText": "把简历当产品 · 快速交付 · 快速学习 · 构建 → 测量 → 迭代 · 保持好奇 · ",
+    "download.ariaPdf": "下载简历 PDF",
+    "download.clickHint": "点击即可下载（也可用页面顶部“下载”）。",
+    "download.chip": "下载",
+    "download.missingTitle": "下载 PDF 简历（待补充）",
+    "download.missingMeta": "TODO：把 resume.pdf 放到站点目录，并在 data/resume.json 里更新 download.pdfPath。",
+    "footer.lastUpdated": "最后更新：{date}",
+    "footer.tagline": "结构优先的简历网站（MVP）",
+    "experience.todoTitle": "TODO：补充经历",
+    "experience.todoMeta": "公司 / 岗位 / 时间 / 关键成果",
+    "experience.detailsTitle": "详细描述",
+    "experience.keyResults": "关键成果",
+    "experience.viewDetails": "点击查看详细描述",
+    "contact.copyEmail": "复制邮箱",
+    "contact.copyWechat": "复制微信号",
+    "contact.copyPhone": "复制电话",
+    "contact.openLink": "打开{label}",
+    "contact.promptCopy": "复制以下内容：",
+    "contact.copiedEmail": "已复制邮箱",
+    "contact.copiedWechat": "已复制微信号",
+    "contact.copiedPhone": "已复制电话",
+    "contact.copyFailed": "复制失败（已打开手动复制）",
+    "education.certifications": "证书",
+    "portfolio.kicker": "Portfolio · Prototype / Demo / Pack（12件展品）",
+    "portfolio.title": "vibe coding 的产品原型展示墙",
+    "portfolio.listMode": "列表模式",
+    "portfolio.galleryMode": "画廊模式",
+    "portfolio.hudWheel": "滚轮/触控板：滑动浏览",
+    "portfolio.hudDrag": "拖拽：滑动浏览",
+    "portfolio.hudClickThumb": "点击缩略图：查看详情",
+    "portfolio.searchPlaceholder": "搜索作品：原型 / demo / 模板 / 分享 / 动效 …",
+    "portfolio.modalAria": "作品详情",
+    "portfolio.sectionWhat": "这是什么",
+    "portfolio.sectionHighlights": "亮点（小白也能懂）",
+    "portfolio.sectionDeliverables": "你会看到什么交付物",
+    "portfolio.sectionScreenshots": "页面截图",
+    "portfolio.screenshotAlt": "页面截图",
+    "portfolio.filterAll": "全部",
+    "portfolio.filterPrototype": "原型",
+    "portfolio.filterDemo": "Demo",
+    "portfolio.filterPack": "资源包",
+    "portfolio.typePrototype": "原型",
+    "portfolio.typeDemo": "Demo",
+    "portfolio.typePack": "资源包",
+    "portfolio.count": "展示：{shown} / {total}",
+    "skills.growth": "增长",
+    "skills.product": "产品",
+    "skills.data": "数据",
+    "skills.tooling": "工具链",
+    "skills.openHint": "点击展开技能点",
+    "bootcamp.boardAria": "训练营照片墙",
+    "bootcamp.photoAria": "训练营照片 {n}（拖拽摆放，点击聚焦）",
+    "bootcamp.photoAlt": "训练营照片 {n}",
+    "bootcamp.caption": "训练营 · {n}",
+    "certificate.slideAria": "证书 {n}：点击切换",
+    "certificate.slideTitle": "证书 · {n}",
+    "blackHole.sectionAria": "黑洞可视化（CodePen 效果复刻）",
+    "blackHole.title": "黑洞",
+    "blackHole.hint": "点击并拖拽：旋转视角",
+    "blackHole.toggleAuto": "切换自动旋转",
+  },
+  en: {
+    "lang.switchToEnglish": "Switch to English",
+    "lang.switchToChinese": "Switch to Chinese",
+    "common.present": "Present",
+    "common.close": "Close",
+    "common.loadingFailedTitle": "Load failed: please preview with a local server",
+    "common.loadingFailedSubtitle": "For example: python3 -m http.server 5173",
+    "skipLink": "Skip to content",
+    "nav.aria": "Page navigation",
+    "nav.hero": "Overview",
+    "nav.experience": "Experience",
+    "nav.projects": "Projects",
+    "nav.skills": "Skills",
+    "nav.education": "Education",
+    "nav.contact": "Contact",
+    "nav.download": "Download",
+    "section.experience": "Experience",
+    "section.skills": "Skills",
+    "section.bootcamp": "Bootcamp",
+    "section.bootcampDesc": "Bootcamp photos: drag to rearrange, click to focus.",
+    "section.education": "Education / Certifications",
+    "section.contact": "Contact",
+    "section.contactDesc": "Includes one-click copy.",
+    "section.download": "Download CV",
+    "section.certificates": "Certificates",
+    "section.certificatesDesc": "Click a certificate to switch the view.",
+    "hero.contact": "Contact",
+    "hero.download": "Download CV",
+    "hero.orbitText": "SHIP FAST · LEARN FASTER · BUILD → MEASURE → ITERATE · MAKE IT FUN · ",
+    "download.ariaPdf": "Download resume PDF",
+    "download.clickHint": "Click to download (also available in the header “Download”).",
+    "download.chip": "Download",
+    "download.missingTitle": "Download PDF (to be added)",
+    "download.missingMeta": "TODO: Put resume.pdf in the site folder and update download.pdfPath in data/resume.json.",
+    "footer.lastUpdated": "Last updated: {date}",
+    "footer.tagline": "Structure-first resume site (MVP)",
+    "experience.todoTitle": "TODO: Add experience",
+    "experience.todoMeta": "Company / Role / Date / Key results",
+    "experience.detailsTitle": "Details",
+    "experience.keyResults": "Key results",
+    "experience.viewDetails": "Click to view details",
+    "contact.copyEmail": "Copy email",
+    "contact.copyWechat": "Copy WeChat",
+    "contact.copyPhone": "Copy phone",
+    "contact.openLink": "Open {label}",
+    "contact.promptCopy": "Copy the following:",
+    "contact.copiedEmail": "Email copied",
+    "contact.copiedWechat": "WeChat copied",
+    "contact.copiedPhone": "Phone copied",
+    "contact.copyFailed": "Copy failed (manual copy opened)",
+    "education.certifications": "Certifications",
+    "portfolio.kicker": "Portfolio · Prototype / Demo / Pack (12 exhibits)",
+    "portfolio.title": "Vibe-coded Prototype Wall",
+    "portfolio.listMode": "List",
+    "portfolio.galleryMode": "Gallery",
+    "portfolio.hudWheel": "Scroll: browse",
+    "portfolio.hudDrag": "Drag: browse",
+    "portfolio.hudClickThumb": "Click thumbnail: details",
+    "portfolio.searchPlaceholder": "Search: prototype / demo / templates / share / motion…",
+    "portfolio.modalAria": "Project details",
+    "portfolio.sectionWhat": "What it is",
+    "portfolio.sectionHighlights": "Highlights (plain English)",
+    "portfolio.sectionDeliverables": "Deliverables",
+    "portfolio.sectionScreenshots": "Screenshots",
+    "portfolio.screenshotAlt": "Screenshot",
+    "portfolio.filterAll": "All",
+    "portfolio.filterPrototype": "Prototype",
+    "portfolio.filterDemo": "Demo",
+    "portfolio.filterPack": "Pack",
+    "portfolio.typePrototype": "Prototype",
+    "portfolio.typeDemo": "Demo",
+    "portfolio.typePack": "Pack",
+    "portfolio.count": "Shown: {shown} / {total}",
+    "skills.growth": "Growth",
+    "skills.product": "Product",
+    "skills.data": "Data",
+    "skills.tooling": "Tooling",
+    "skills.openHint": "Click to expand",
+    "bootcamp.boardAria": "Bootcamp photo board",
+    "bootcamp.photoAria": "Bootcamp photo {n} (drag to rearrange, click to focus)",
+    "bootcamp.photoAlt": "Bootcamp photo {n}",
+    "bootcamp.caption": "Bootcamp · {n}",
+    "certificate.slideAria": "Certificate {n}: click to switch",
+    "certificate.slideTitle": "Certificate · {n}",
+    "blackHole.sectionAria": "Black Hole Visualization (CodePen recreation)",
+    "blackHole.title": "Black Hole",
+    "blackHole.hint": "Click and drag to rotate view",
+    "blackHole.toggleAuto": "Toggle automatic rotation",
+  },
+};
+
 const SECTION_IDS = ["hero", "experience", "projects", "skills", "education", "contact", "download"];
+
+const normalizeLang = (value) => {
+  const raw = String(value ?? "")
+    .trim()
+    .toLowerCase();
+  if (!raw) return null;
+  if (raw === "zh" || raw.startsWith("zh-")) return "zh";
+  if (raw === "en" || raw.startsWith("en-")) return "en";
+  return null;
+};
+
+const getDeep = (obj, path) => {
+  if (!obj || typeof obj !== "object") return undefined;
+  // Support flat keys like "nav.hero" (preferred in this project).
+  if (Object.prototype.hasOwnProperty.call(obj, path)) return obj[path];
+
+  const parts = String(path ?? "")
+    .split(".")
+    .filter(Boolean);
+  let cur = obj;
+  for (const p of parts) {
+    if (!cur || typeof cur !== "object" || !(p in cur)) return undefined;
+    cur = cur[p];
+  }
+  return cur;
+};
+
+let CURRENT_LANG = "zh";
+
+const t = (key, vars = null) => {
+  const raw =
+    getDeep(I18N[CURRENT_LANG], key) ??
+    getDeep(I18N.zh, key) ??
+    (typeof key === "string" ? key : String(key ?? ""));
+  const str = typeof raw === "string" ? raw : String(raw ?? "");
+  if (!vars) return str;
+  return str.replace(/\{(\w+)\}/g, (_, k) => (k in vars ? String(vars[k]) : `{${k}}`));
+};
+
+const getInitialLang = () => {
+  const fromQuery = (() => {
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      return normalizeLang(sp.get("lang"));
+    } catch {
+      return null;
+    }
+  })();
+  if (fromQuery) return fromQuery;
+
+  const fromStorage = (() => {
+    try {
+      return normalizeLang(window.localStorage.getItem(LANG_STORAGE_KEY));
+    } catch {
+      return null;
+    }
+  })();
+  if (fromStorage) return fromStorage;
+
+  const fromNavigator = normalizeLang(navigator.language);
+  if (fromNavigator) return fromNavigator;
+  return "zh";
+};
+
+const setLanguage = (nextLang) => {
+  const lang = normalizeLang(nextLang);
+  if (!lang) return;
+  try {
+    window.localStorage.setItem(LANG_STORAGE_KEY, lang);
+  } catch {
+    // ignore
+  }
+
+  const url = new URL(window.location.href);
+  if (lang === "zh") url.searchParams.delete("lang");
+  else url.searchParams.set("lang", lang);
+  window.location.href = url.toString();
+};
+
+const applyLanguageUI = () => {
+  const html = document.documentElement;
+  html.lang = CURRENT_LANG === "en" ? "en" : "zh-CN";
+  html.dataset.lang = CURRENT_LANG;
+
+  const toggle = document.getElementById("langToggle");
+  if (toggle) {
+    const next = CURRENT_LANG === "zh" ? "en" : "zh";
+    toggle.textContent = next === "en" ? "EN" : "中文";
+    toggle.setAttribute("aria-label", next === "en" ? t("lang.switchToEnglish") : t("lang.switchToChinese"));
+    toggle.addEventListener("click", () => setLanguage(next));
+  }
+
+  const skip = document.getElementById("skipLink");
+  if (skip) skip.textContent = t("skipLink");
+
+  const nav = document.querySelector(".nav");
+  if (nav) nav.setAttribute("aria-label", t("nav.aria"));
+  if (nav) {
+    const labelBySection = {
+      hero: t("nav.hero"),
+      experience: t("nav.experience"),
+      projects: t("nav.projects"),
+      skills: t("nav.skills"),
+      education: t("nav.education"),
+      contact: t("nav.contact"),
+      download: t("nav.download"),
+    };
+    for (const a of nav.querySelectorAll("a[href^=\"#\"]")) {
+      const id = a.getAttribute("href")?.slice(1);
+      if (id && id in labelBySection) a.textContent = labelBySection[id];
+    }
+  }
+
+  const setIdText = (id, key) => {
+    const node = document.getElementById(id);
+    if (node) node.textContent = t(key);
+  };
+
+  setIdText("experienceTitle", "section.experience");
+  setIdText("skillsTitle", "section.skills");
+  setIdText("bootcampTitle", "section.bootcamp");
+  setIdText("educationTitle", "section.education");
+  setIdText("contactTitle", "section.contact");
+  setIdText("downloadTitle", "section.download");
+  setIdText("certificateShowcaseTitle", "section.certificates");
+
+  const bootcampDesc = document.querySelector("#bootcamp .section-desc");
+  if (bootcampDesc) bootcampDesc.textContent = t("section.bootcampDesc");
+  const contactDesc = document.querySelector("#contact .section-desc");
+  if (contactDesc) contactDesc.textContent = t("section.contactDesc");
+  const certDesc = document.querySelector("#photoSwitch .section-desc");
+  if (certDesc) certDesc.textContent = t("section.certificatesDesc");
+
+  const portrait = document.querySelector(".heroPortrait img");
+  if (portrait instanceof HTMLImageElement) {
+    portrait.alt = CURRENT_LANG === "en" ? "Portrait" : "个人照片";
+  }
+
+  const orbit = document.querySelector(".heroOrbitText textPath");
+  if (orbit) {
+    const base = getDeep(I18N.en, "hero.orbitText") ?? t("hero.orbitText");
+    orbit.textContent = `${base}${base}`;
+  }
+
+  const projectsSection = document.getElementById("projects");
+  if (projectsSection) projectsSection.setAttribute("aria-label", t("nav.projects"));
+
+  const projectKicker = document.querySelector("#projects .moduleHeader .kicker");
+  if (projectKicker) projectKicker.textContent = t("portfolio.kicker");
+  const projectTitle = document.querySelector("#projects .moduleHeader .title");
+  if (projectTitle) projectTitle.textContent = t("portfolio.title");
+  const btnToList = document.getElementById("btnToList");
+  if (btnToList) btnToList.textContent = t("portfolio.listMode");
+  const btnToGallery = document.getElementById("btnToGallery");
+  if (btnToGallery) btnToGallery.textContent = t("portfolio.galleryMode");
+
+  const hudPills = [...document.querySelectorAll("#projects .hud .hudPill")];
+  const hudText = [t("portfolio.hudWheel"), t("portfolio.hudDrag"), t("portfolio.hudClickThumb")];
+  hudPills.forEach((pill, i) => {
+    if (!hudText[i]) return;
+    pill.textContent = hudText[i];
+  });
+
+  const searchInput = document.getElementById("searchInput");
+  if (searchInput instanceof HTMLInputElement) {
+    searchInput.placeholder = t("portfolio.searchPlaceholder");
+  }
+
+  const modalNode = document.querySelector("#modalMask .modal");
+  if (modalNode) modalNode.setAttribute("aria-label", t("portfolio.modalAria"));
+  const closeBtn = document.getElementById("mClose");
+  if (closeBtn instanceof HTMLButtonElement) closeBtn.title = t("common.close");
+
+  const bootcampBoard = document.getElementById("bootcampBoard");
+  if (bootcampBoard) bootcampBoard.setAttribute("aria-label", t("bootcamp.boardAria"));
+
+  document.querySelectorAll(".photo-switch-slide").forEach((slide, idx) => {
+    slide.setAttribute("aria-label", t("certificate.slideAria", { n: idx + 1 }));
+    const h3 = slide.querySelector("h3");
+    if (h3) h3.textContent = t("certificate.slideTitle", { n: String(idx + 1).padStart(2, "0") });
+  });
+
+  const blackHoleSection = document.getElementById("blackHoleShowcase");
+  if (blackHoleSection) blackHoleSection.setAttribute("aria-label", t("blackHole.sectionAria"));
+
+  const info = document.getElementById("info");
+  if (info) {
+    const firstText = [...info.childNodes].find((n) => n.nodeType === Node.TEXT_NODE && n.textContent.trim());
+    if (firstText) firstText.textContent = t("blackHole.title");
+    const hint = info.querySelector("span");
+    if (hint) hint.textContent = t("blackHole.hint");
+  }
+
+  const autoRotateToggle = document.getElementById("autoRotateToggle");
+  if (autoRotateToggle instanceof HTMLElement) autoRotateToggle.title = t("blackHole.toggleAuto");
+};
+
+CURRENT_LANG = getInitialLang();
+applyLanguageUI();
 
 function el(tag, props = {}, children = []) {
   const node = document.createElement(tag);
@@ -28,7 +413,7 @@ function el(tag, props = {}, children = []) {
 function formatRange(start, end) {
   if (!start && !end) return "";
   if (start && end) return `${start} – ${end}`;
-  if (start && !end) return `${start} – 至今`;
+  if (start && !end) return `${start} – ${t("common.present")}`;
   return `${end}`;
 }
 
@@ -142,7 +527,7 @@ function renderHero(data) {
       highlights.find((h) => {
         const text = String(h ?? "").trim();
         if (!text) return false;
-        return !/^\s*关键词[:：]/.test(text);
+        return !/^\s*(关键词|Keywords)\s*[:：]/i.test(text);
       }) ?? ""
     ).trim();
     summaryNode.textContent = summaryText;
@@ -171,8 +556,8 @@ function renderHero(data) {
   }
 
   const cta = document.getElementById("heroCta");
-  const contactBtn = el("a", { class: "btn primary", href: "#contact", text: "联系我" });
-  const downloadBtn = el("a", { class: "btn", href: "#download", "data-download-link": "true", text: "下载简历" });
+  const contactBtn = el("a", { class: "btn primary", href: "#contact", text: t("hero.contact") });
+  const downloadBtn = el("a", { class: "btn", href: "#download", "data-download-link": "true", text: t("hero.download") });
   cta.replaceChildren(contactBtn, downloadBtn);
   cta.classList.add("reveal");
   cta.style.transitionDelay = "560ms";
@@ -189,7 +574,7 @@ function applyDownloadLinks(pdfPath) {
     if (hasPdf) {
       a.setAttribute("href", pdfPath);
       a.setAttribute("download", "");
-      a.setAttribute("aria-label", "下载简历 PDF");
+      a.setAttribute("aria-label", t("download.ariaPdf"));
     } else {
       a.setAttribute("href", "#download");
       a.removeAttribute("download");
@@ -316,8 +701,8 @@ function renderExperience(data) {
     root.classList.remove("cd-timeline", "js-cd-timeline");
     root.replaceChildren(
       el("div", { class: "card" }, [
-        el("p", { class: "card-title", text: "TODO：补充经历" }),
-        el("p", { class: "card-meta", text: "公司 / 岗位 / 时间 / 关键成果" }),
+        el("p", { class: "card-title", text: t("experience.todoTitle") }),
+        el("p", { class: "card-meta", text: t("experience.todoMeta") }),
       ])
     );
     return;
@@ -337,7 +722,9 @@ function renderExperience(data) {
     const [accent, accent2] = ACCENT_PAIRS[index % ACCENT_PAIRS.length];
     const titleText = it.title ?? `${it.org ?? "TODO：公司"}｜${it.role ?? "TODO：岗位"}`;
     const dateText = formatRange(it.start, it.end);
-    const metaText = [it.location, !it.location ? it.role : null].filter(Boolean).join("｜");
+    const metaText = [it.location, !it.location ? it.role : null]
+      .filter(Boolean)
+      .join(CURRENT_LANG === "en" ? " | " : "｜");
     const summary = Array.isArray(it.summary) ? it.summary : [];
     const achievements = Array.isArray(it.achievements) ? it.achievements : [];
     const detailParagraphs = (
@@ -356,7 +743,7 @@ function renderExperience(data) {
         title: titleText,
         hook: hookParts.join(" · "),
         body: el("div", { class: "sec" }, [
-          el("h3", { text: "详细描述" }),
+          el("h3", { text: t("experience.detailsTitle") }),
           ...detailParagraphs.map((p) => el("p", { text: p })),
         ]),
       });
@@ -378,13 +765,13 @@ function renderExperience(data) {
       summary.length ? el("ul", { class: "list" }, summary.map((s) => el("li", { text: s }))) : null,
       achievements.length
         ? el("div", { class: "cd-timeline__section" }, [
-            el("p", { class: "card-meta", text: "关键成果" }),
+            el("p", { class: "card-meta", text: t("experience.keyResults") }),
             el("ul", { class: "list" }, achievements.map((a) => el("li", { text: a }))),
           ])
         : null,
       hasDetails
         ? el("div", { class: "cd-timeline__expander", "aria-hidden": "true" }, [
-            el("span", { text: "点击查看详细描述" }),
+            el("span", { text: t("experience.viewDetails") }),
             el("span", { class: "cd-timeline__expander-icon", "aria-hidden": "true", text: "⌄" }),
           ])
         : null,
@@ -463,7 +850,7 @@ function initPortfolioProjectsModule() {
   /* ==========================
      12 works data (from 2 作品集模块 - 参考代码.html)
      ========================== */
-  const projects = [
+  const projectsZh = [
     // Prototype (4)
     {
       id: "P01",
@@ -651,6 +1038,244 @@ function initPortfolioProjectsModule() {
     },
   ];
 
+  const projectsEn = [
+    // Prototype (4)
+    {
+      id: "P01",
+      type: "prototype",
+      title: "Inspo Vault — Inspiration Saver",
+      hook: "Turn interesting finds into reusable inspiration assets: one‑tap save, auto organize, easy retrieval.",
+      tags: ["Prototype", "Content organization", "Information architecture"],
+      cover: { kind: "image", src: "prototype-picture/p1-1.png", badge: "Prototype" },
+      gallery: { label: "Inspiration Saver", chips: ["Figma prototype", "Organization"] },
+      detail: {
+        what: 'A prototype for “save → categorize → reuse”, so what you save doesn’t get lost and is easy to find again.',
+        highlights: [
+          "Super-fast save action that doesn’t interrupt reading",
+          "Auto categorization + tags that feel like an “inspiration warehouse”",
+          "Search + revisit paths that make inspiration reusable",
+        ],
+        deliverables: ["High-fidelity prototype (flows)", "Key components (card/tag/save feedback)", "Interaction notes"],
+        images: ["prototype-picture/p1-2.png", "prototype-picture/p1-3.png"],
+      },
+    },
+    {
+      id: "P02",
+      type: "prototype",
+      title: "Challenge Hub — Topic Challenge Event Page",
+      hook: "Rules at a glance, 3-step submission, leaderboard motivation: turn spectators into contributors.",
+      tags: ["Prototype", "Event page", "Community vibe"],
+      cover: { kind: "image", src: "prototype-picture/p2-1.png", badge: "Prototype" },
+      gallery: { label: "Topic Challenge Page", chips: ["Event structure", "3-step submission"] },
+      detail: {
+        what: "A reusable event template for content communities: make rules clear, guide submission, and encourage sharing.",
+        highlights: [
+          "Modular rules blocks reduce cognitive load",
+          "Step-by-step submission lowers friction",
+          "Leaderboard + featured works increase motivation",
+        ],
+        deliverables: ["Event page prototype", "Submission flow prototype", "Component breakdown (rules/board/CTA)"],
+        images: ["prototype-picture/p2-2.png", "prototype-picture/p2-3.png"],
+      },
+    },
+    {
+      id: "P03",
+      type: "prototype",
+      title: "Collection Hub — Curated Collection Landing",
+      hook: "Turn scattered posts into a directory-like guide: chapter nav + continue reading makes content feel like finishing a task.",
+      tags: ["Prototype", "Curation", "Navigation"],
+      cover: { kind: "image", src: "prototype-picture/p3-1.png", badge: "Prototype" },
+      gallery: { label: "Collection Landing", chips: ["Directory IA", "Continue reading"] },
+      detail: {
+        what: "A collection-page prototype that turns content into a continuous path, increasing completion and saves.",
+        highlights: [
+          "Cover + chapters communicate structure instantly",
+          "Progress hints reduce the cost of interruptions",
+          "Save the collection to take the guide with you",
+        ],
+        deliverables: ["Collection prototype", "Chapter navigation interaction", "IA sketch"],
+        images: ["prototype-picture/p3-2.png", "prototype-picture/p3-3.png"],
+      },
+    },
+    {
+      id: "P04",
+      type: "prototype",
+      title: "Creator Brand Page — A Creator Profile that Feels Like a Brand",
+      hook: "Help creators be understood like a brand: curated collections, signature works, FAQs, and a collab entry—at a glance.",
+      tags: ["Prototype", "Personal brand", "Community"],
+      cover: { kind: "image", src: "prototype-picture/p4-1.png", badge: "Prototype" },
+      gallery: { label: "Creator Profile", chips: ["Brand page", "Work wall"] },
+      detail: {
+        what: "A creator profile prototype that showcases content and quickly explains what you’re great at and what to start with.",
+        highlights: [
+          "Curated collections lower discovery cost",
+          "A signature-work wall builds trust",
+          "A collab entry point makes it feel like a reachable brand",
+        ],
+        deliverables: ["Profile prototype", "Collections/signature-work modules", "Collaboration card component"],
+        images: ["prototype-picture/p4-2.png", "prototype-picture/p4-3.png"],
+      },
+    },
+
+    // Demo (4)
+    {
+      id: "D01",
+      type: "demo",
+      title: "Masonry Card Kit — Masonry Component Gallery",
+      hook: "A runnable gallery of common content cards: covers, tags, states, and hover micro-interactions on one page.",
+      tags: ["Demo", "Figma → Web", "Component library"],
+      cover: { kind: "image", src: "prototype-picture/p5-1.png", badge: "Demo" },
+      gallery: { label: "Masonry Card Kit", chips: ["Runnable demo", "Component gallery"] },
+      detail: {
+        what: "A runnable component gallery that demonstrates layouts, states, and details—closing the loop from design to implementation.",
+        highlights: [
+          "Card variants: cover, tags, information density",
+          "State system: hover/active/empty placeholders",
+          "Reusable: a lightweight mini design system",
+        ],
+        deliverables: ["Web demo page", "Component matrix", "Style guidelines (extensible)"],
+        images: ["prototype-picture/p5-2.png", "prototype-picture/p5-3.png"],
+      },
+    },
+    {
+      id: "D02",
+      type: "demo",
+      title: "Micro-interactions Pack — Tiny Motion Playground",
+      hook: "Three micro-interactions (save/follow/filter): clear feedback without distraction, so users know what just happened.",
+      tags: ["Demo", "Motion", "Product polish"],
+      cover: { kind: "image", src: "prototype-picture/p6-1.png", badge: "Demo" },
+      gallery: { label: "Micro-interactions", chips: ["Runnable demo", "Motion recipes"] },
+      detail: {
+        what: "Three common interaction demos: minimal motion cost, maximum certainty feedback.",
+        highlights: [
+          "Save: light confirmation without stealing the spotlight",
+          "Follow: clear state + a sense of undo",
+          "Filter: chip toggle + list transition",
+        ],
+        deliverables: ["Web demo", "Storyboards/frames", "Timing and rhythm notes"],
+        images: ["prototype-picture/p6-2.png", "prototype-picture/p6-3.png"],
+      },
+    },
+    {
+      id: "D03",
+      type: "demo",
+      title: "Share Card Generator — Share-ready Card Builder",
+      hook: "Switch theme/layout/cover styles and generate a more presentable share card—made for distribution contexts.",
+      tags: ["Demo", "Distribution", "Templates"],
+      cover: { kind: "image", src: "prototype-picture/p7-1.png", badge: "Demo" },
+      gallery: { label: "Share Card Generator", chips: ["Template switching", "Share-ready"] },
+      detail: {
+        what: "A playful tool that makes what you share look like a piece of work—not an ad.",
+        highlights: [
+          "Multiple templates for different information structures",
+          "Theme/layout switching to fit content types quickly",
+          "Output preview optimized for sharing scenarios",
+        ],
+        deliverables: ["Web demo", "Template wall", "Sharing scenario previews"],
+        images: ["prototype-picture/p7-2.png", "prototype-picture/p7-3.png"],
+      },
+    },
+    {
+      id: "D04",
+      type: "demo",
+      title: "Landing First Screen Switcher — Hero Template Comparer",
+      hook: "Three “value in 3 seconds” hero templates: visual-first / strong contrast / step-by-step. Click to switch and compare.",
+      tags: ["Demo", "Landing page", "Conversion"],
+      cover: { kind: "image", src: "prototype-picture/p8-1.png", badge: "Demo" },
+      gallery: { label: "Hero Template Switcher", chips: ["Template comparison", "Value in 3s"] },
+      detail: {
+        what: "Focus on the first screen: help users understand what it is, why it matters, and what to click—within 3 seconds.",
+        highlights: [
+          "Three layouts for different products and content types",
+          "Clear hierarchy reduces comprehension cost",
+          "Reusable as a landing-page skeleton",
+        ],
+        deliverables: ["Web demo", "Hero structure board", "Mobile previews"],
+        images: ["prototype-picture/p8-2.png", "prototype-picture/p8-3.png"],
+      },
+    },
+
+    // Pack (4)
+    {
+      id: "K01",
+      type: "pack",
+      title: "Cover Style Library — 10 Cover Templates",
+      hook: "A unified cover-template wall for guides/checklists/comparisons/reviews… swap content in and ship premium-looking covers.",
+      tags: ["Pack", "Cover templates", "Content style"],
+      cover: { kind: "image", src: "prototype-picture/p9-1.png", badge: "Pack" },
+      gallery: { label: "Cover Style Library", chips: ["10 templates", "Consistent style"] },
+      detail: {
+        what: "A cover template library for content communities: make a “professional look” repeatable and easy to reuse.",
+        highlights: [
+          "Templatized: quick apply by content type",
+          "Unified style makes the whole site feel like a brand",
+          "Extensible: new types won’t break the system",
+        ],
+        deliverables: ["Template wall", "Per-template variants", "Quick usage guidelines"],
+        images: ["prototype-picture/p9-2.png", "prototype-picture/p9-3.png"],
+      },
+    },
+    {
+      id: "K02",
+      type: "pack",
+      title: "Topic Branding Mini-kit — Visual System Starter",
+      hook: "Make a topic scale like a brand: palette, typography hierarchy, badges, and card styles—all in one kit.",
+      tags: ["Pack", "Visual system", "Topic branding"],
+      cover: { kind: "image", src: "prototype-picture/p10-1.png", badge: "Pack" },
+      gallery: { label: "Branding Mini-kit", chips: ["Visual system", "Topic branding"] },
+      detail: {
+        what: "Turn a topic from a one-off campaign into a sustainable brand—consistent from pages to cards.",
+        highlights: [
+          "Palette + hierarchy unify expression",
+          "Badges/tags strengthen recognition",
+          "Reusable components across event and content pages",
+        ],
+        deliverables: ["Mini-kit board", "Component set", "Topic page preview"],
+        images: ["prototype-picture/p10-2.png", "prototype-picture/p10-3.png"],
+      },
+    },
+    {
+      id: "K03",
+      type: "pack",
+      title: "Community Stickers & Badges — Sticker/Badge Pack",
+      hook: "Reactions, achievement badges, challenge completion marks… small assets that supercharge community vibes.",
+      tags: ["Pack", "Stickers & badges", "Community feel"],
+      cover: { kind: "image", src: "prototype-picture/p11-1.png", badge: "Pack" },
+      gallery: { label: "Stickers & Badges", chips: ["Community vibe", "Unified style"] },
+      detail: {
+        what: "Make “vibe” a reusable asset: use it in comments, event pages, and profiles without reinventing visuals.",
+        highlights: [
+          "Consistent linear style stays clean, not noisy",
+          "Clear hierarchy across dense and light UIs",
+          "Use cases: comments / events / profiles",
+        ],
+        deliverables: ["Sticker & badge wall", "Badge level examples", "Use-case mocks"],
+        images: ["prototype-picture/p11-2.png", "prototype-picture/p11-3.png"],
+      },
+    },
+    {
+      id: "K04",
+      type: "pack",
+      title: "Motion Recipes — Reusable Motion Specs",
+      hook: "Enter/exit, modals, save feedback, filter transitions… package motion into reusable “recipe cards”.",
+      tags: ["Pack", "Motion system", "Product polish"],
+      cover: { kind: "image", src: "prototype-picture/p12-1.png", badge: "Pack" },
+      gallery: { label: "Motion Recipes", chips: ["Rhythm spec", "Reusable"] },
+      detail: {
+        what: "Explain motion with recipe cards: build faster, stay stable, and keep interactions consistent.",
+        highlights: [
+          "Unified tempo: no random fast/slow",
+          "Subtle easing: motion supports content, not fights it",
+          "Reusable: component-level motion patterns",
+        ],
+        deliverables: ["Recipe cards", "Storyboard frames", "Timing/easing notes"],
+        images: ["prototype-picture/p12-2.png", "prototype-picture/p12-3.png"],
+      },
+    },
+  ];
+
+  const projects = CURRENT_LANG === "en" ? projectsEn : projectsZh;
+
   const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
 
   function showList() {
@@ -700,7 +1325,10 @@ function initPortfolioProjectsModule() {
     const list = (images || []).filter(Boolean);
     if (!list.length) return "";
     return `<div class="shotGrid">${list
-      .map((src) => `<div class="shot"><img loading="lazy" alt="页面截图" src="${escapeHtml(src)}"/></div>`)
+      .map(
+        (src) =>
+          `<div class="shot"><img loading="lazy" alt="${escapeHtml(t("portfolio.screenshotAlt"))}" src="${escapeHtml(src)}"/></div>`
+      )
       .join("")}</div>`;
   }
 
@@ -709,14 +1337,14 @@ function initPortfolioProjectsModule() {
     if (!p) return;
 
     const d = p.detail || {};
-    const shots = d.images?.length ? section("页面截图", shotGrid(d.images)) : "";
+    const shots = d.images?.length ? section(t("portfolio.sectionScreenshots"), shotGrid(d.images)) : "";
     modal.open({
       title: p.title,
       hook: p.hook,
       body: `
-      ${section("这是什么", `<p>${escapeHtml(d.what || "—")}</p>`)}
-      ${section("亮点（小白也能懂）", ul(d.highlights || []))}
-      ${section("你会看到什么交付物", ul(d.deliverables || []))}
+      ${section(t("portfolio.sectionWhat"), `<p>${escapeHtml(d.what || "—")}</p>`)}
+      ${section(t("portfolio.sectionHighlights"), ul(d.highlights || []))}
+      ${section(t("portfolio.sectionDeliverables"), ul(d.deliverables || []))}
       ${shots}
     `,
     });
@@ -726,10 +1354,10 @@ function initPortfolioProjectsModule() {
      2D list rendering
      ========================== */
   const FILTERS = [
-    { key: "all", label: "全部" },
-    { key: "prototype", label: "Prototype" },
-    { key: "demo", label: "Demo" },
-    { key: "pack", label: "Pack" },
+    { key: "all", label: t("portfolio.filterAll") },
+    { key: "prototype", label: t("portfolio.filterPrototype") },
+    { key: "demo", label: t("portfolio.filterDemo") },
+    { key: "pack", label: t("portfolio.filterPack") },
   ];
   const state2d = { type: "all", keyword: "" };
 
@@ -780,7 +1408,7 @@ function initPortfolioProjectsModule() {
 
   function renderMasonry() {
     const list = projects.filter(match2d);
-    count.textContent = `展示：${list.length} / ${projects.length}`;
+    count.textContent = t("portfolio.count", { shown: list.length, total: projects.length });
 
     masonry.innerHTML = list
       .map(
@@ -791,7 +1419,7 @@ function initPortfolioProjectsModule() {
             <h3 class="cardTitle">${escapeHtml(p.title)}</h3>
             <p class="cardHook">${escapeHtml(p.hook)}</p>
             <div class="miniRow">
-              <span class="pill">${escapeHtml(p.type.toUpperCase())}</span>
+              <span class="pill">${escapeHtml(typeLabel(p.type))}</span>
               <span class="tag">${escapeHtml(p.gallery?.chips?.[0] || "—")}</span>
               <span class="tag">${escapeHtml(p.gallery?.chips?.[1] || "—")}</span>
             </div>
@@ -842,10 +1470,10 @@ function initPortfolioProjectsModule() {
 
   let bound3d = false;
 
-  function typeLabel(t) {
-    if (t === "prototype") return "Prototype";
-    if (t === "demo") return "Demo";
-    return "Pack";
+  function typeLabel(type) {
+    if (type === "prototype") return t("portfolio.typePrototype");
+    if (type === "demo") return t("portfolio.typeDemo");
+    return t("portfolio.typePack");
   }
 
   function artGradientStyle(p) {
@@ -1144,10 +1772,10 @@ function renderSkills(data) {
   };
 
   const menus = [
-    { key: "growth", label: "增长", accent: "var(--c-pink)", glow: "rgba(122, 92, 255, 0.65)", items: getGroupTokens(["增长"]) },
-    { key: "product", label: "产品", accent: "var(--c-cyan)", glow: "rgba(34, 197, 94, 0.55)", items: getGroupTokens(["产品"]) },
-    { key: "data", label: "数据", accent: "var(--c-purple)", glow: "rgba(96, 165, 250, 0.55)", items: getGroupTokens(["数据"]) },
-    { key: "tooling", label: "工具链", accent: "var(--c-lime)", glow: "rgba(245, 158, 11, 0.5)", items: getGroupTokens(["前沿工具链", "工具链", "工具链路", "工具"]) },
+    { key: "growth", label: t("skills.growth"), accent: "var(--c-pink)", glow: "rgba(122, 92, 255, 0.65)", items: getGroupTokens(["增长", "Growth"]) },
+    { key: "product", label: t("skills.product"), accent: "var(--c-cyan)", glow: "rgba(34, 197, 94, 0.55)", items: getGroupTokens(["产品", "Product"]) },
+    { key: "data", label: t("skills.data"), accent: "var(--c-purple)", glow: "rgba(96, 165, 250, 0.55)", items: getGroupTokens(["数据", "Data"]) },
+    { key: "tooling", label: t("skills.tooling"), accent: "var(--c-lime)", glow: "rgba(245, 158, 11, 0.5)", items: getGroupTokens(["前沿工具链", "工具链", "工具链路", "工具", "Tooling", "Toolchain", "Tool Chain"]) },
   ];
 
   const toPositions = (n) => {
@@ -1175,8 +1803,8 @@ function renderSkills(data) {
         for: id,
         tabindex: "0",
         role: "button",
-      "aria-expanded": "false",
-      "aria-label": `${menu.label}（点击展开技能点）`,
+        "aria-expanded": "false",
+        "aria-label": `${menu.label} · ${t("skills.openHint")}`,
       },
       [
         el("span", { class: "skills-goo-title", text: menu.label }),
@@ -1201,7 +1829,7 @@ function renderSkills(data) {
       {
         class: "skills-goo-menu",
         style: `--skills-accent:${menu.accent};--skills-glow:${menu.glow ?? "rgba(122, 92, 255, 0.6)"};`,
-        "aria-label": `${menu.label}技能`,
+        "aria-label": CURRENT_LANG === "en" ? `${menu.label} skills` : `${menu.label}技能`,
         dataset: { key: menu.key },
       },
       [input, label, ...bubbles]
@@ -1288,7 +1916,7 @@ function renderBootcamp(_data) {
         class: "bootcamp-photo",
         role: "button",
         tabindex: "0",
-        "aria-label": `训练营照片 ${index}（拖拽摆放，点击聚焦）`,
+        "aria-label": t("bootcamp.photoAria", { n: index }),
         dataset: { index },
       },
       [
@@ -1296,12 +1924,12 @@ function renderBootcamp(_data) {
           el("img", {
             class: "bootcamp-photo-img",
             src,
-            alt: `训练营照片 ${index}`,
+            alt: t("bootcamp.photoAlt", { n: index }),
             loading: "lazy",
             decoding: "async",
             draggable: "false",
           }),
-          el("div", { class: "bootcamp-photo-caption", text: `Bootcamp · ${index}` }),
+          el("div", { class: "bootcamp-photo-caption", text: t("bootcamp.caption", { n: index }) }),
         ]),
       ]
     );
@@ -1616,9 +2244,11 @@ function renderEducation(data) {
   if (education.length) {
     blocks.push(
       ...education.map((e) => {
-        const meta = [e.school, e.degree, e.major, formatRange(e.start, e.end)].filter(Boolean).join("｜");
+        const meta = [e.school, e.degree, e.major, formatRange(e.start, e.end)]
+          .filter(Boolean)
+          .join(CURRENT_LANG === "en" ? " | " : "｜");
         return el("div", { class: "card" }, [
-          el("p", { class: "card-title", text: e.school ?? "TODO：学校" }),
+          el("p", { class: "card-title", text: e.school ?? (CURRENT_LANG === "en" ? "TODO: School" : "TODO：学校") }),
           el("p", { class: "card-meta", text: meta }),
         ]);
       })
@@ -1626,16 +2256,18 @@ function renderEducation(data) {
   } else {
     blocks.push(
       el("div", { class: "card" }, [
-        el("p", { class: "card-title", text: "TODO：补充教育经历" }),
-        el("p", { class: "card-meta", text: "学校 / 专业 / 学位 / 时间" }),
+        el("p", { class: "card-title", text: CURRENT_LANG === "en" ? "TODO: Add education" : "TODO：补充教育经历" }),
+        el("p", { class: "card-meta", text: CURRENT_LANG === "en" ? "School / Major / Degree / Dates" : "学校 / 专业 / 学位 / 时间" }),
       ])
     );
   }
 
   blocks.push(
     el("div", { class: "card" }, [
-      el("p", { class: "card-title", text: "证书" }),
-      certs.length ? el("ul", { class: "list" }, certs.map((c) => el("li", { text: c }))) : el("p", { class: "card-meta", text: "TODO：补充证书（如无可删除此项）" }),
+      el("p", { class: "card-title", text: t("education.certifications") }),
+      certs.length
+        ? el("ul", { class: "list" }, certs.map((c) => el("li", { text: c })))
+        : el("p", { class: "card-meta", text: CURRENT_LANG === "en" ? "TODO: Add certifications (remove this card if none)" : "TODO：补充证书（如无可删除此项）" }),
     ])
   );
 
@@ -1674,18 +2306,18 @@ function renderContact(data) {
       el("button", {
         class: "icon-btn fx-btn",
         type: "button",
-        "aria-label": "复制邮箱",
-        title: "复制邮箱",
+        "aria-label": t("contact.copyEmail"),
+        title: t("contact.copyEmail"),
         onclick: async () => {
           const ok = await copyToClipboard(String(basics.email));
-          if (!ok) window.prompt("复制以下内容：", String(basics.email));
-          toast(ok ? "已复制邮箱" : "复制失败（已打开手动复制）");
+          if (!ok) window.prompt(t("contact.promptCopy"), String(basics.email));
+          toast(ok ? t("contact.copiedEmail") : t("contact.copyFailed"));
         },
       })
     );
     actions[actions.length - 1].innerHTML = icon("email");
   } else {
-    todos.push("邮箱");
+    todos.push(CURRENT_LANG === "en" ? "Email" : "邮箱");
   }
 
   if (isMeaningful(basics.wechat)) {
@@ -1693,19 +2325,19 @@ function renderContact(data) {
       el("button", {
         class: "icon-btn fx-btn",
         type: "button",
-        "aria-label": "复制微信号",
-        title: "复制微信号",
+        "aria-label": t("contact.copyWechat"),
+        title: t("contact.copyWechat"),
         onclick: async () => {
           const ok = await copyToClipboard(String(basics.wechat));
-          if (!ok) window.prompt("复制以下内容：", String(basics.wechat));
-          toast(ok ? "已复制微信号" : "复制失败（已打开手动复制）");
+          if (!ok) window.prompt(t("contact.promptCopy"), String(basics.wechat));
+          toast(ok ? t("contact.copiedWechat") : t("contact.copyFailed"));
         },
       })
     );
     actions[actions.length - 1].innerHTML = icon("wechat");
   } else if (basics.wechat) {
     // present but TODO
-    todos.push("微信号");
+    todos.push(CURRENT_LANG === "en" ? "WeChat" : "微信号");
   }
 
   if (isMeaningful(basics.phone)) {
@@ -1713,12 +2345,12 @@ function renderContact(data) {
       el("button", {
         class: "icon-btn fx-btn",
         type: "button",
-        "aria-label": "复制电话",
-        title: "复制电话",
+        "aria-label": t("contact.copyPhone"),
+        title: t("contact.copyPhone"),
         onclick: async () => {
           const ok = await copyToClipboard(String(basics.phone));
-          if (!ok) window.prompt("复制以下内容：", String(basics.phone));
-          toast(ok ? "已复制电话" : "复制失败（已打开手动复制）");
+          if (!ok) window.prompt(t("contact.promptCopy"), String(basics.phone));
+          toast(ok ? t("contact.copiedPhone") : t("contact.copyFailed"));
         },
       })
     );
@@ -1726,7 +2358,7 @@ function renderContact(data) {
   }
 
   for (const l of links) {
-    const label = (l?.label ?? "链接").toString().trim();
+    const label = (l?.label ?? (CURRENT_LANG === "en" ? "Link" : "链接")).toString().trim();
     const url = l?.url;
     if (!isMeaningful(url)) continue;
     const key = label.toLowerCase();
@@ -1736,8 +2368,8 @@ function renderContact(data) {
       href: String(url),
       target: "_blank",
       rel: "noreferrer",
-      "aria-label": `打开${label}`,
-      title: `打开${label}`,
+      "aria-label": t("contact.openLink", { label }),
+      title: t("contact.openLink", { label }),
     });
     a.innerHTML = icon(kind);
     actions.push(a);
@@ -1746,7 +2378,7 @@ function renderContact(data) {
   root.replaceChildren(
     el("div", { class: "card contact-card" }, [
       el("div", { class: "contact-actions", role: "list" }, actions.map((n) => el("div", { class: "contact-action", role: "listitem" }, n))),
-      todos.length ? el("p", { class: "card-meta", text: `TODO：补充${todos.join(" / ")}` }) : null,
+      todos.length ? el("p", { class: "card-meta", text: `${CURRENT_LANG === "en" ? "TODO: Add " : "TODO：补充"}${todos.join(" / ")}` }) : null,
     ])
   );
 }
@@ -1760,22 +2392,22 @@ function renderDownload(data) {
     root.replaceChildren(
       el("div", { class: "download-row" }, [
         el("div", {}, [
-          el("p", { class: "card-title", text: "下载 PDF 简历（待补充）" }),
-          el("p", { class: "card-meta", text: "TODO：把 resume.pdf 放到站点目录，并在 data/resume.json 里更新 download.pdfPath。" }),
+          el("p", { class: "card-title", text: t("download.missingTitle") }),
+          el("p", { class: "card-meta", text: t("download.missingMeta") }),
         ]),
       ])
     );
     return;
   }
 
-  const label = dl.label ?? "下载 PDF 简历";
+  const label = dl.label ?? (CURRENT_LANG === "en" ? "Download resume PDF" : "下载 PDF 简历");
   root.replaceChildren(
     el("a", { class: "download-row", href: pdfPath, download: "", "data-download-link": "true" }, [
       el("div", {}, [
         el("p", { class: "card-title", text: label }),
-        el("p", { class: "card-meta", text: "点击即可下载（也可用页面顶部“下载”）。" }),
+        el("p", { class: "card-meta", text: t("download.clickHint") }),
       ]),
-      el("span", { class: "download-chip", "aria-hidden": "true", text: "下载" }),
+      el("span", { class: "download-chip", "aria-hidden": "true", text: t("download.chip") }),
     ])
   );
 }
@@ -1783,8 +2415,8 @@ function renderDownload(data) {
 function renderMeta(data) {
   const meta = data.meta ?? {};
   const parts = [];
-  if (meta.lastUpdated) parts.push(`Last updated: ${meta.lastUpdated}`);
-  parts.push("结构优先的简历网站（MVP）");
+  if (meta.lastUpdated) parts.push(t("footer.lastUpdated", { date: meta.lastUpdated }));
+  parts.push(t("footer.tagline"));
   setText("footerMeta", parts.join(" · "));
 }
 
@@ -1823,13 +2455,15 @@ async function main() {
   if (typeof window !== "undefined" && window.__RESUME_DATA__ && typeof window.__RESUME_DATA__ === "object") {
     data = window.__RESUME_DATA__;
   } else {
-    const res = await fetch(DATA_URL, { cache: "no-store" });
-    if (!res.ok) throw new Error(`Failed to load ${DATA_URL}: ${res.status}`);
+    const dataUrl = DATA_URL_BY_LANG[CURRENT_LANG] ?? DATA_URL_BY_LANG.zh;
+    const res = await fetch(dataUrl, { cache: "no-store" });
+    if (!res.ok) throw new Error(`Failed to load ${dataUrl}: ${res.status}`);
     data = await res.json();
   }
 
   const basics = data.basics ?? {};
-  document.title = `${basics.name ?? "简历"}｜${basics.headline ?? "Resume"}`;
+  const fallbackTitle = CURRENT_LANG === "en" ? "Resume" : "简历";
+  document.title = `${basics.name ?? fallbackTitle}｜${basics.headline ?? fallbackTitle}`;
 
   renderHero(data);
   renderExperience(data);
@@ -1848,6 +2482,6 @@ async function main() {
 
 main().catch((err) => {
   console.error(err);
-  setText("heroTitle", "加载失败：请用本地服务器预览");
-  setText("heroSubtitle", "例如在该目录运行：python3 -m http.server 5173");
+  setText("heroTitle", t("common.loadingFailedTitle"));
+  setText("heroSubtitle", t("common.loadingFailedSubtitle"));
 });

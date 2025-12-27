@@ -268,6 +268,30 @@ button:focus-visible {
   transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease, background 120ms ease;
 }
 
+.nav .nav-lang {
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  line-height: 1;
+  cursor: pointer;
+  --fx-radius: var(--radius-pill);
+  --fx-border: 2px;
+  --fx-bg: rgba(255, 255, 255, 0.62);
+  --fx-fg: var(--text);
+  --fx-c1: rgba(122, 92, 255, 0.95);
+  --fx-c2: rgba(34, 197, 94, 0.9);
+  --fx-c3: rgba(96, 165, 250, 0.85);
+}
+
+.nav .nav-lang:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav .nav-lang:active {
+  transform: translateY(0);
+}
+
 .nav a:hover {
   background: linear-gradient(135deg, rgba(122, 92, 255, 0.14), rgba(34, 197, 94, 0.12));
   text-decoration: none;
