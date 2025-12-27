@@ -381,6 +381,7 @@ button:focus-visible {
   background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
+  padding-top: env(safe-area-inset-top);
   z-index: 20;
 }
 
@@ -477,8 +478,57 @@ button:focus-visible {
   box-shadow: var(--shadow-sm);
 }
 
+@media (max-width: 720px) {
+  .header-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: var(--space-2) 0;
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  .nav {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav a,
+  .nav .nav-lang {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .section {
+    scroll-margin-top: 132px;
+  }
+}
+
 .section {
   padding: var(--space-7) 0;
+  scroll-margin-top: 96px;
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding: var(--space-6) 0;
+  }
+
+  .hero {
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-5);
+  }
 }
 
 .section-head {
@@ -1529,6 +1579,27 @@ html.js .reveal.is-visible {
   }
 }
 
+@media (max-width: 640px) {
+  #bootcamp .bootcamp-board {
+    height: 380px;
+  }
+
+  #bootcamp .bootcamp-photo {
+    width: 160px;
+    height: 210px;
+  }
+
+  #bootcamp .bootcamp-photo-inner {
+    border-radius: 16px;
+    padding: 10px 10px 12px;
+  }
+
+  #bootcamp .bootcamp-photo-img {
+    height: 140px;
+    border-radius: 12px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   #bootcamp .bootcamp-board::after,
   #bootcamp .bootcamp-photo {
@@ -1614,6 +1685,17 @@ html.js .reveal.is-visible {
     font-size: 18px;
     bottom: 16px;
     left: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  #photoSwitch .photo-switch-container {
+    height: min(420px, 62vh);
+  }
+
+  #photoSwitch .photo-switch-slide {
+    margin: 6px;
+    border-radius: 16px;
   }
 }
 
@@ -2485,6 +2567,16 @@ html.js .reveal.is-visible {
 
   #projects .mobileNote {
     display: block;
+  }
+
+  /* iOS: prevent input focus zoom */
+  #projects .searchInput {
+    font-size: 16px;
+  }
+
+  #projects .filterChip {
+    font-size: 13px;
+    padding: 9px 12px;
   }
 }
 

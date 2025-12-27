@@ -10,6 +10,17 @@
     window.matchMedia("(prefers-reduced-motion: reduce)")?.matches;
   if (prefersReduce) return;
 
+  const finePointer =
+    typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(pointer: fine)")?.matches;
+  const hoverCapable =
+    typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(hover: hover)")?.matches;
+  // Mobile/touch: skip running the background trail entirely (saves battery + avoids jank).
+  if (!finePointer || !hoverCapable) return;
+
   const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
   if (!ctx) return;
 
@@ -163,6 +174,7 @@
     }
     updateTrail(x, y, t, trail.down);
     trail.lastEvent = t;
+    start();
   };
 
   window.addEventListener("pointermove", onMove, { passive: true });
@@ -229,6 +241,11 @@
     lastT = now;
     fade(dt);
     draw(dt, now);
+
+    // Auto-stop when idle (no active particles and no recent pointer movement).
+    if (active.length === 0 && (!trail.active || now - trail.lastEvent > 1200)) {
+      stop();
+    }
   };
 
   const start = () => {
@@ -244,8 +261,5 @@
 
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) stop();
-    else start();
   });
-
-  start();
 })();
