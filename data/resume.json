@@ -197,14 +197,28 @@
   ],
   "education": [
     {
-      "school": "Harvard University",
-      "degree": "B.A. in Economics",
-      "major": "Minor in Computer Science",
+      "school": "哈佛大学",
+      "degree": "经济学学士",
+      "major": "辅修：计算机科学",
       "start": "2021.09",
       "end": "2025.05"
+    },
+    {
+      "school": "斯坦福大学",
+      "degree": "管理科学与工程硕士",
+      "major": "方向：数据驱动增长与实验设计",
+      "start": "2025.09",
+      "end": "2027.06"
+    },
+    {
+      "school": "麻省理工学院",
+      "degree": "管理学博士",
+      "major": "研究方向：用户行为建模与增长系统",
+      "start": "2027.09",
+      "end": "2031.06"
     }
   ],
-  "certifications": ["Harvard Product Lab（产品实践项目）", "AI Builders 社群（工具共创）"],
+  "certifications": ["哈佛产品实验室（产品实践项目）", "AI 共创者社群（工具共创）"],
   "download": {
     "label": "下载 PDF 简历",
     "pdfPath": "./resume.pdf"
