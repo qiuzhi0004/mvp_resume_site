@@ -1144,10 +1144,10 @@ function renderSkills(data) {
   };
 
   const menus = [
-    { key: "growth", label: "增长", accent: "var(--c-pink)", items: getGroupTokens(["增长"]) },
-    { key: "product", label: "产品", accent: "var(--c-cyan)", items: getGroupTokens(["产品"]) },
-    { key: "data", label: "数据", accent: "var(--c-purple)", items: getGroupTokens(["数据"]) },
-    { key: "tooling", label: "工具链", accent: "var(--c-lime)", items: getGroupTokens(["前沿工具链", "工具链", "工具链路", "工具"]) },
+    { key: "growth", label: "增长", accent: "var(--c-pink)", glow: "rgba(122, 92, 255, 0.65)", items: getGroupTokens(["增长"]) },
+    { key: "product", label: "产品", accent: "var(--c-cyan)", glow: "rgba(34, 197, 94, 0.55)", items: getGroupTokens(["产品"]) },
+    { key: "data", label: "数据", accent: "var(--c-purple)", glow: "rgba(96, 165, 250, 0.55)", items: getGroupTokens(["数据"]) },
+    { key: "tooling", label: "工具链", accent: "var(--c-lime)", glow: "rgba(245, 158, 11, 0.5)", items: getGroupTokens(["前沿工具链", "工具链", "工具链路", "工具"]) },
   ];
 
   const toPositions = (n) => {
@@ -1200,7 +1200,7 @@ function renderSkills(data) {
       "nav",
       {
         class: "skills-goo-menu",
-        style: `--skills-accent:${menu.accent};`,
+        style: `--skills-accent:${menu.accent};--skills-glow:${menu.glow ?? "rgba(122, 92, 255, 0.6)"};`,
         "aria-label": `${menu.label}技能`,
         dataset: { key: menu.key },
       },

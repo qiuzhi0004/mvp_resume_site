@@ -1024,23 +1024,96 @@ html.js .reveal.is-visible {
   border-radius: 999px;
   display: grid;
   place-items: center;
-  background: var(--skills-accent, var(--accent));
-  color: rgba(255, 255, 255, 0.96);
+  /* Button FX: NeilSchulz/ZYOzJWq (faithful port; scaled to goo-size) */
+  --fx-accent: var(--skills-accent, var(--accent));
+  --fx-glow: var(--skills-glow, rgba(122, 92, 255, 0.6));
+  --opacity: 1;
+  --radius: 999px;
+  --ring_spin_duration: 8s;
+  --ring_width: 5px;
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  opacity: var(--opacity);
   border: none;
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(140% 120% at 30% 18%, rgba(255, 255, 255, 0.22), transparent 58%) padding-box,
+    radial-gradient(140% 120% at 70% 92%, rgba(0, 0, 0, 0.62), transparent 62%) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(0, 0, 0, 0.56)) padding-box,
+    repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.075) 0,
+        rgba(255, 255, 255, 0.075) 1px,
+        rgba(0, 0, 0, 0.045) 1px,
+        rgba(0, 0, 0, 0.045) 3px
+      )
+      padding-box,
+    radial-gradient(90% 90% at 50% 30%, rgba(255, 255, 255, 0.12), transparent 62%) padding-box;
+  color: rgba(255, 255, 255, 0.96);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.55), 0 0 18px rgba(0, 0, 0, 0.35);
   transform: translate3d(0, 0, 0);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -14px 20px rgba(0, 0, 0, 0.55),
+    0 18px 42px rgba(0, 0, 0, 0.14);
+  overflow: visible;
+}
+
+#skills .skills-goo-open-button::before,
+#skills .skills-goo-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  padding: var(--ring_width);
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(148, 163, 184, 0.94) 10%,
+    rgba(241, 245, 249, 0.98) 22%,
+    rgba(100, 116, 139, 0.92) 36%,
+    rgba(248, 250, 252, 0.98) 46%,
+    var(--fx-accent) 54%,
+    rgba(255, 255, 255, 0.98) 62%,
+    rgba(148, 163, 184, 0.94) 78%,
+    rgba(255, 255, 255, 0.98) 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.96;
+  pointer-events: none;
+  filter: drop-shadow(0 0 14px var(--fx-glow)) drop-shadow(0 0 26px var(--fx-glow));
+  animation: ringSpin var(--ring_spin_duration) linear infinite;
+  pointer-events: none;
+}
+
+#skills .skills-goo-open-button::after,
+#skills .skills-goo-item::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: inherit;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.08) 42%, transparent 72%),
+    radial-gradient(90px 70px at 30% 26%, rgba(255, 255, 255, 0.16), transparent 72%);
+  opacity: 0.65;
+  pointer-events: none;
+  z-index: 0;
 }
 
 #skills .skills-goo-open-button {
   cursor: pointer;
   user-select: none;
   text-decoration: none;
-  transition: transform ease-out 200ms;
+  transition: opacity 160ms ease;
   z-index: 3;
 }
 
 #skills .skills-goo-open-button:hover {
-  transform: scale(1.08) translateZ(0);
+  opacity: 0.97;
 }
 
 #skills .skills-goo-open-button:focus-visible {
@@ -1053,13 +1126,12 @@ html.js .reveal.is-visible {
   font-weight: 900;
   letter-spacing: 0.12em;
   font-size: 14px;
-  text-transform: uppercase;
   transition: opacity 160ms ease, transform 160ms ease;
 }
 
 #skills .skills-goo-item {
-  cursor: default;
-  transition: transform ease-out 200ms, background 160ms ease, color 160ms ease;
+  cursor: pointer;
+  transition: transform ease-out 200ms, opacity 160ms ease;
   z-index: 1;
   padding: 9px;
   font-size: 11px;
@@ -1068,32 +1140,25 @@ html.js .reveal.is-visible {
   line-height: 1.15;
   text-align: center;
   text-wrap: balance;
-  overflow: hidden;
+  opacity: 0;
+  transform: translate3d(0, 0, 0) scale(0.12);
+  pointer-events: none;
 }
 
 #skills .skills-goo-item:hover {
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--skills-accent, var(--accent));
+  opacity: 0.97;
 }
 
 #skills .skills-goo-item:focus-visible {
   box-shadow: var(--focus), 0 18px 42px rgba(0, 0, 0, 0.18);
 }
 
-#skills .skills-goo-open:checked + .skills-goo-open-button {
-  transform: scale(0.88);
-  transition-timing-function: linear;
-}
-
-#skills .skills-goo-open:checked + .skills-goo-open-button .skills-goo-title {
-  opacity: 0.92;
-  transform: scale(0.96);
-}
-
 #skills .skills-goo-open:checked ~ .skills-goo-item {
   transition-timing-function: cubic-bezier(0.935, 0, 0.34, 1.33);
   transition-duration: var(--dur, 180ms);
-  transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0);
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0) scale(1);
 }
 
 .skillsGooDefs {
@@ -1103,11 +1168,22 @@ html.js .reveal.is-visible {
   overflow: hidden;
 }
 
+@keyframes ringSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   #skills .skills-goo-open-button,
   #skills .skills-goo-item,
   #skills .skills-goo-title {
     transition: none !important;
+  }
+
+  #skills .skills-goo-open-button::before,
+  #skills .skills-goo-item::before {
+    animation: none !important;
   }
 }
 
